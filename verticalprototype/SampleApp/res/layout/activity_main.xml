@@ -14,7 +14,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/femalebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -22,13 +22,12 @@
         android:text="@string/female" />
 
     <Button
-        android:id="@+id/Button01"
+        android:id="@+id/malebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_alignRight="@+id/button1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="14dp"
+        android:layout_above="@+id/femalebutton"
+        android:layout_alignLeft="@+id/femalebutton"
+        android:layout_alignRight="@+id/femalebutton"
         android:text="@string/male" />
 
 </RelativeLayout>
