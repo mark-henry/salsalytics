@@ -10,9 +10,18 @@ public class EventSender {
 	static String password = "";
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args) {
 		EventSender sender = new EventSender();
-		sender.sendEvent("test_login", "username:jdoe");
+		sender.sendEvent("test_login1", "username:jdoe");
 	}
 	
 	public void sendEvent(String name, String attributes) {
@@ -27,8 +36,8 @@ public class EventSender {
 			ConnectionBundle bundle = soapPool.getConnectionBundle(orgID);
 			restPool.configureOrg(orgID, host, token);
 			ApexConnection apexConn = bundle.getApexConnection();
-			apexConn.executeAnonymous("EventAdder.addEvent(\"" + name + "\", \"" + attributes + "\");");
-			System.out.println("Success?");
+			ExecuteAnonResult result = apexConn.executeAnonymous("EventAdder.addEvent('" + name + "', '" + attributes + "');");
+			System.out.println(result.isCompiled());
 		}
 		catch (Exception exc) {
 			System.err.println("Hax error: " + exc.getClass().toString() + ": "+ exc.getMessage());
