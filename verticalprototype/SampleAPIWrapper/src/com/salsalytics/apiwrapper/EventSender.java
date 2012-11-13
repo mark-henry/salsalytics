@@ -13,13 +13,11 @@ public class EventSender {
 	public static void main(String[] args) {
 		EventSender sender = new EventSender();
 		sender.sendEvent("test_login", "username:jdoe");
-		
 	}
 	
-	public void sendEvent(String title, String map) {
+	public void sendEvent(String name, String attributes) {
 		ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
 		RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();
-		
 		
 		try {
 			soapPool.configureOrg(orgID, username, password, 5);
@@ -29,10 +27,10 @@ public class EventSender {
 			ConnectionBundle bundle = soapPool.getConnectionBundle(orgID);
 			restPool.configureOrg(orgID, host, token);
 			ApexConnection apexConn = bundle.getApexConnection();
-			apexConn.executeAnonymous("EventAdder.addEvent(\"" + title + "\", \"" + map + "\");");
+			apexConn.executeAnonymous("EventAdder.addEvent(\"" + name + "\", \"" + attributes + "\");");
 		}
 		catch (Exception exc) {
-			System.err.println("Cheating error");
+			System.err.println("Hax error: " + exc.getMessage());
 		}
 	}
 }
