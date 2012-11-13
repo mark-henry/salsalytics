@@ -28,9 +28,10 @@ public class EventSender {
 			restPool.configureOrg(orgID, host, token);
 			ApexConnection apexConn = bundle.getApexConnection();
 			apexConn.executeAnonymous("EventAdder.addEvent(\"" + name + "\", \"" + attributes + "\");");
+			System.out.println("Success?");
 		}
 		catch (Exception exc) {
-			System.err.println("Hax error: " + exc.getMessage());
+			System.err.println("Hax error: " + exc.getClass().toString() + ": "+ exc.getMessage());
 		}
 	}
 }
