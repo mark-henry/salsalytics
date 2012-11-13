@@ -6,24 +6,20 @@ import com.teamlazerbeez.crm.sf.soap.*;
 
 public class EventSender {
 	static String orgID = "00DE0000000e66B";
-	static String username = "";
-	static String password = "";
+	static String username = "msilverio324@gmail.com";
+	static String password = "salsaforceg0";
+	
+	
+
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+/*	
 	public static void main(String[] args) {
 		EventSender sender = new EventSender();
-		sender.sendEvent("test_login1", "username:jdoe");
+		sender.sendEvent("test_login", "Gender:Male");
 	}
-	
+*/	
 	public void sendEvent(String name, String attributes) {
 		ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
 		RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();
