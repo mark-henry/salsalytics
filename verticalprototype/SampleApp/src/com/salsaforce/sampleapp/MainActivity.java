@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import com.salsalytics.*;
+import com.salsalytics.apiwrapper.EventSender;
 
 public class MainActivity extends Activity {
 
@@ -20,6 +22,8 @@ public class MainActivity extends Activity {
         maleButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				EventSender sender = new EventSender();
+				sender.sendEvent("test_login", "Gender:Male");
 				showPopUp();
 			}
 		});
@@ -28,6 +32,8 @@ public class MainActivity extends Activity {
         femaleButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				EventSender sender = new EventSender();
+				sender.sendEvent("test_login", "Gender:Female");
 				showPopUp();
 			}
 		});
