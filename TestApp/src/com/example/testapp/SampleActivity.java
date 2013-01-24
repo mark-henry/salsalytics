@@ -28,7 +28,7 @@ public class SampleActivity extends Activity {
 				AsyncTaskSender ats = new AsyncTaskSender();
 				try {
 					ats.addData("login", "Gender:Male");
-					ats.execute(new URL("http://freshsalsaforce.appspot.com/"));
+					ats.execute(new URL("http://freshsalsaforce.appspot.com/freshsalsatothemax"));
 				} catch (MalformedURLException e) {
 					Log.e("Malformed String", e.getMessage());
 				}

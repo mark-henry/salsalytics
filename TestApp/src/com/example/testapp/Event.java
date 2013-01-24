@@ -14,7 +14,7 @@ import android.util.Log;
 
 public class Event {
 
-	private static String url = "http://freshsalsaforce.appspot.com/";
+	private static String url = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	private String charset = "UTF-8";
 	private String query = "?";
 
@@ -52,7 +52,7 @@ public class Event {
 			name = java.net.URLEncoder.encode(name, this.charset);
 			attributes = java.net.URLEncoder.encode(attributes, this.charset);
 			
-			query += name + "=" + attributes + "&";
+			query = name + "=" + attributes + "&";
 		} catch (UnsupportedEncodingException e) {
 			Log.d("Unsupported Encoding Operation", e.getMessage());
 		}
