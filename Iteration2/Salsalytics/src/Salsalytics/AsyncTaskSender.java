@@ -1,4 +1,4 @@
-package com.example.testapp;
+package Salsalytics;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -7,28 +7,28 @@ import java.net.URL;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class AsyncTaskSender extends AsyncTask<URL, Integer, Long> {
-	private Event sender = new Event();
+class AsyncTaskSender extends AsyncTask<URL, Integer, Long> {
+	private Event event;
+	
+	AsyncTaskSender(Event event) {
+		this.event = event;
+	}
 	
 	@Override
 	protected Long doInBackground(URL... params) {
 
 		Long status;
 		try {
-			status = Long.valueOf(sender.get());
+			status = Long.valueOf(event.get());
 			Log.i("web request return status", ""+status);
 			
 			return status;
 		} catch (MalformedURLException e) {
-			Log.d("Malformed String", e.getMessage());
+			Log.e("Malformed String", e.getMessage());
 		} catch (IOException e) {
-			Log.d("IOException", e.getMessage());
+			Log.e("IOException", e.getMessage());
 		}
 		
 		return null;
-	}
-	
-	protected void addData(String name, String attributes){
-		sender.addData(name, attributes);
 	}
 }
