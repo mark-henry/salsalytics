@@ -7,6 +7,14 @@
 		<servlet-name>FreshSalsaToTheMax</servlet-name>
 		<url-pattern>/freshsalsatothemax</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>FreshSalsaSend</servlet-name>
+		<servlet-class>com.salsaforce.freshsalsa.FreshSalsaSendServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FreshSalsaSend</servlet-name>
+		<url-pattern>/freshsalsasend</url-pattern>
+	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
