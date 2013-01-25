@@ -37,31 +37,5 @@ public class FreshSalsaSendServlet extends HttpServlet {
 				txn.rollback();
 			}
 		}
-		
-		String title = "";
-		Entity event = new Entity("Event");
-		
-		
-		for (Object key : req.getParameterMap().keySet()) {
-			if (key instanceof String) {
-				String sKey = (String) key;
-				resp.getWriter().println(sKey + " " + req.getParameter(sKey));
-				if (sKey.equals("SalsalyticsEventTitle"))
-				{
-					title = req.getParameter(sKey);
-				}
-				else 
-				{
-					event.setProperty(sKey, req.getParameter(sKey));
-				}
-			}
-		}
-		if (!title.trim().equals(""))
-		{
-			event.setProperty("SalsalyticsEventTitle", title);
-			datastore.put(event);
-		}
-		
 	}
-	
 }
