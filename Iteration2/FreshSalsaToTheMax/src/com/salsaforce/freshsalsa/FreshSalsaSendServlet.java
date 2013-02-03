@@ -1,14 +1,13 @@
 package com.salsaforce.freshsalsa;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import com.teamlazerbeez.crm.sf.rest.*;
 import com.teamlazerbeez.crm.sf.soap.*;
-
-import java.net.URL;
 import javax.servlet.http.*;
-
 import com.google.appengine.api.datastore.*;
 
 
@@ -23,7 +22,8 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 3");
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 33");
+		sendEvent("hi","there", resp);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction txn = datastore.beginTransaction();
@@ -56,9 +56,17 @@ public class FreshSalsaSendServlet extends HttpServlet {
 					{
 						sb.setLength(sb.length()-1);
 					}
-					sendEvent(title,sb.toString(), resp);
+					//sendEvent(title,sb.toString(), resp);
 				}
 			}
+			
+			// TODO: Clear datastore of elements that were sent
+			List<Key> keysToDelete = new ArrayList<Key>();
+			for (Entity e : results) {
+				keysToDelete.add(e.getKey());
+			}
+			datastore.delete(txn, keysToDelete);
+			
 			txn.commit();
 		}
 		finally {
@@ -68,23 +76,13 @@ public class FreshSalsaSendServlet extends HttpServlet {
 		}
 	}
 	
-	public void sendEvent(String name, String attributes, HttpServletResponse resp) {
+	public void sendEvent(String name, String attributes, HttpServletResponse resp) throws IOException {
+		resp.getWriter().println("something works...");
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+		ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
+		RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();
 		try {
-			ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
-			RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();
-		}
-		catch (Exception exc) 
-		{
-			try {
-				resp.getWriter().print(exc.getStackTrace());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		/*
-		try {
-			soapPool.configureOrg(orgID, username, password, 5);
+			/*soapPool.configureOrg(orgID, username, password, 5);
 			BindingConfig bindingConfig = soapPool.getConnectionBundle(orgID).getBindingConfig();
 			String host = new URL(bindingConfig.getPartnerServerUrl()).getHost();
 			String token = bindingConfig.getSessionId();
@@ -92,10 +90,11 @@ public class FreshSalsaSendServlet extends HttpServlet {
 			restPool.configureOrg(orgID, host, token);
 			ApexConnection apexConn = bundle.getApexConnection();
 			ExecuteAnonResult result = apexConn.executeAnonymous("EventAdder.addEvent('" + name + "', '" + attributes + "');");
-			System.out.println(result.isCompiled());
+			System.out.println(result.isCompiled());*/
 		}
 		catch (Exception exc) {
-			System.err.println("Hax error: " + exc.getClass().toString() + ": "+ exc.getMessage());
-		}*/
+			resp.getWriter().println("Hax error: " + exc.getClass().toString() + ": "+ exc.getMessage());
+		}
+
 	}
 }
