@@ -1,172 +1,212 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.net.CookieStore;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class OAuthSalesforce {
-    private static String grant_type = "password";
-    private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
-    private static String client_secret = "4986454028622869431";
-    private static String username = "msilverio324@gmail.com";
-    private static String password = "salsaforceg0";
-    
-    private String charset = "UTF-8";
-    private String requestUrl = "https://login.salesforce.com/services/oauth2/token";
-    private String urlParams = "grant_type=" + grant_type + "&" +
-                               "client_id=" + client_id + "&" +
-                               "client_secret=" + client_secret + "&" +
-                               "username=" + username + "&" +
-                               "password=" + password;
-    public OAuthSalesforce() {
-    	CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-    }
-    
-    private String encodeQueryMap(Map<String, String> urlParams) {
-    	StringBuilder query = new StringBuilder();
-    	boolean first = true;
-    	
-    	for (Entry<String, String> urlParam : urlParams.entrySet()) {
-            if (first) {
-                first = false;
-            }
-            else {
-                query.append("&");
-            }
-            query.append(encode(urlParam.getKey()) + "=" + encode(urlParam.getValue()));
-        }
-    	return query.toString();
-    }
-    
-    public String doGet(String requestUrl, Map<String, String> urlParams) throws MalformedURLException, IOException {
-    	String body = "";
-        String query = "";
-        
-        query = encodeQueryMap(urlParams);
-        URL url = new URL(requestUrl + "?" + query);
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        connection.setRequestProperty("Accept-Charset", charset);
-        InputStream response = connection.getInputStream();
-        System.out.println(connection.getResponseCode());
-        Scanner scan = new Scanner(response).useDelimiter("\\A");
-        if (scan.hasNext()) {
-        	body = scan.next();
-        }
-        scan.close();
-        return body;
-    }
-    
-    public String doPost(String requestUrl, Map<String, String> urlParams, Map<String, String> headers, String queryString) throws MalformedURLException, IOException {
-        String body = "";
-        String query = "";
-        if (urlParams != null) {
-        	query = encodeQueryMap(urlParams);
-        }
-        else {
-        	query = queryString;
-        }
-        URL url = new URL(requestUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();           
-        connection.setDoOutput(true);
-        connection.setDoInput(true);
-        connection.setInstanceFollowRedirects(false); 
-        connection.setRequestMethod("POST"); 
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
-        connection.setRequestProperty("charset", "UTF-8");
-        connection.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
-        if (headers != null) {
-		    for (Entry<String, String> header : headers.entrySet()) {
-		    	connection.setRequestProperty(encode(header.getKey()), header.getValue());
-		    }
-        }
-        connection.setUseCaches (false);
+	private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
+	private static String client_secret = "4986454028622869431";
+	private static String username = "msilverio324@gmail.com";
+	private static String password = "salsaforceg0";
 
-        DataOutputStream wr = new DataOutputStream(connection.getOutputStream ());
-        wr.writeBytes(query);
-        wr.flush();
-        wr.close();
-        System.out.println(connection.getResponseCode());
-        InputStream is = null;
-        try {
-        	is = connection.getInputStream();
-        	Scanner scan = new Scanner(is).useDelimiter("\\A");
-	        if (scan.hasNext()) {
-	        	body = scan.next();
-	        }
-	        scan.close();
-        }
-        catch (Exception exc) {
-        	Scanner scan = new Scanner(connection.getErrorStream()).useDelimiter("\\A");
-            if (scan.hasNext()) {
-            	System.out.println(scan.next());
-            }
-        }
-        
-        return body;
-    }
-    public String encode(String urlParam) {
-        String charset = "UTF-8";
-        try {
-            return URLEncoder.encode(urlParam, charset);
-        }
-        catch (UnsupportedEncodingException exc) {
-            return "";
-        }
-    }
-    public static void main(String[] args) {
-        String requestUrl = "https://login.salesforce.com/services/oauth2/token";
-        String responceBody = "";
-        Map<String, String> urlParams = new HashMap<String, String>();
-        urlParams.put("grant_type", grant_type);
-        urlParams.put("client_id", client_id);
-        urlParams.put("client_secret", client_secret);
-        urlParams.put("username", username);
-        urlParams.put("password", password);
-        System.out.println("Entering Post");
-        try {
-            responceBody = new OAuthSalesforce().doPost(requestUrl, urlParams, null, "");
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (responceBody.compareTo("") != 0) {
-        	System.out.println("Entering Json parser");
-        	int ind = responceBody.indexOf("access_token");
-        	ind += 15;
-        	String token = responceBody.substring(ind);
-        	token = token.substring(0, token.length() - 2);
-        	System.out.println(responceBody);
-        	System.out.println(token);
+	private String token = "";
+	private String instanceUrl = "";
 
-        	HashMap<String, String> headers = new HashMap<String, String>();
-        	headers.put("Authorization", "Bearer " + token);
-        	headers.put("Content-Type", "application/json");
-        	String params = "{\"Name\":\"test\"}";
-        	try {
-				String resp = new OAuthSalesforce().doPost("https://na9.salesforce.com/services/data/v20.0/sobjects/Account/", null, headers, params);
-				System.out.println(resp);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public OAuthSalesforce() {
+		CookieHandler.setDefault(new CookieManager(null,
+				CookiePolicy.ACCEPT_ALL));
+	}
+
+	private String buildQueryString(Map<String, String> urlParams) {
+		StringBuilder query = new StringBuilder();
+		boolean first = true;
+
+		for (Entry<String, String> urlParam : urlParams.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				query.append("&");
 			}
-        	
-        }
-    }
+			query.append(encode(urlParam.getKey()) + "="
+					+ encode(urlParam.getValue()));
+		}
+		return query.toString();
+	}
+
+	/**
+	 * Turns an InputStream into a String.
+	 * 
+	 * @param is
+	 *            The Inputstream.
+	 * @return The String equivilant of the InputStream or an empty String if it
+	 *         is null.
+	 */
+	private String inputStreamToString(InputStream is) {
+		String str = "";
+
+		if (is != null) {
+			Scanner scan = new Scanner(is).useDelimiter("\\A");
+			if (scan.hasNext()) {
+				str = scan.next();
+			}
+			scan.close();
+		}
+		return str;
+	}
+
+	public String doGet(String requestUrl, String query)
+			throws MalformedURLException, Exception {
+		URL url = null;
+		HttpURLConnection connection = null;
+		InputStream response = null;
+
+		if (query == null || query == "") {
+			url = new URL(requestUrl);
+		} else {
+			url = new URL(requestUrl + "?" + query);
+		}
+		connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("Accept-Charset", "UTF-8");
+		try {
+			response = connection.getInputStream();
+			return inputStreamToString(response);
+		} catch (Exception exc) {
+			String message = connection.getResponseCode() + " "
+					+ inputStreamToString(connection.getErrorStream());
+			throw new Exception(message, exc);
+		}
+	}
+
+	public String doPost(String requestUrl, Map<String, String> headers,
+			String query) throws MalformedURLException, IOException, Exception {
+		URL url = new URL(requestUrl);
+		System.out.println(requestUrl);
+		if (query == null) {
+			query = "";
+		}
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setInstanceFollowRedirects(false);
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+		connection.setRequestProperty("charset", "UTF-8");
+		connection.setRequestProperty("Content-Length",
+				"" + Integer.toString(query.getBytes().length));
+		if (headers != null) {
+			for (Entry<String, String> header : headers.entrySet()) {
+				System.out.println(encode(header.getKey()) + " "
+						+ header.getValue());
+				connection.setRequestProperty(encode(header.getKey()),
+						header.getValue());
+			}
+		}
+		connection.setUseCaches(false);
+
+		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+		wr.writeBytes(query);
+		wr.close();
+		System.out.println(connection.getResponseCode());
+		try {
+			InputStream response = connection.getInputStream();
+			return inputStreamToString(response);
+		} catch (Exception exc) {
+			String message = connection.getResponseCode() + " "
+					+ inputStreamToString(connection.getErrorStream());
+			throw new Exception(message, exc);
+		}
+	}
+
+	public String encode(String urlParam) {
+		String charset = "UTF-8";
+		try {
+			return URLEncoder.encode(urlParam, charset);
+		} catch (UnsupportedEncodingException exc) {
+			return "";
+		}
+	}
+
+	private String getValueFromJson(String json, String key) {
+		int start = json.indexOf(key) + key.length() + 3;
+		int end = json.indexOf("\"", start);
+		if (start < end && start < json.length() && end <= json.length()) {
+			return json.substring(start, end);
+		} else {
+			return "";
+		}
+	}
+
+	public String login(String client_id, String client_secret,
+			String username, String password) {
+		String requestUrl = "https://login.salesforce.com/services/oauth2/token";
+		Map<String, String> query = new HashMap<String, String>();
+		String responseBody = "";
+
+		query.put("grant_type", "password");
+		query.put("client_id", client_id);
+		query.put("client_secret", client_secret);
+		query.put("username", username);
+		query.put("password", password);
+
+		try {
+			responseBody = doPost(requestUrl, null, buildQueryString(query));
+			token = getValueFromJson(responseBody, "access_token");
+			instanceUrl = getValueFromJson(responseBody, "instance_url");
+			return responseBody;
+		} catch (MalformedURLException e) {
+			System.err.println("Bad Url");
+			return "";
+		} catch (IOException e) {
+			System.err.println("Connection Error");
+			return "";
+		} catch (Exception exc) {
+			System.err.println(exc.getMessage());
+			return "";
+		}
+	}
+
+	public String createObject(String restApiUrl, String params,
+			String contentType) {
+		if (token == null || instanceUrl == null || token.compareTo("") == 0
+				|| instanceUrl.compareTo("") == 0) {
+			return "";
+		}
+		HashMap<String, String> headers = new HashMap<String, String>();
+		headers.put("Authorization", "Bearer " + token);
+		headers.put("Content-Type", contentType);
+		try {
+			return doPost(instanceUrl + restApiUrl, headers, params);
+		} catch (Exception exc) {
+			return exc.getMessage();
+		}
+	}
+
+	public static void main(String[] args) {
+		OAuthSalesforce instance = new OAuthSalesforce();
+		String responseBody = instance.login(client_id, client_secret,
+				username, password);
+		System.out.println(responseBody);
+		System.out.println(instance.token);
+		if (responseBody.compareTo("") != 0) {
+			String contentType = "application/json";
+			String params = "{\"Name\":\"test\"}";
+			String restApiUrl = "/services/data/v20.0/sobjects/Account/";
+			String response = instance.createObject(restApiUrl, params,
+					contentType);
+			System.out.println(response);
+		}
+	}
 }
