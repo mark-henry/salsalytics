@@ -1,6 +1,7 @@
 package com.salsaforce.freshsalsa;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
@@ -15,14 +16,22 @@ import com.google.appengine.api.datastore.*;
 @SuppressWarnings("serial")
 public class FreshSalsaSendServlet extends HttpServlet {
 	
-	static String orgID = "00DE0000000e66B";
-	static String username = "msilverio324@gmail.com";
-	static String password = "salsaforceg0";
+	private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
+	private static String client_secret = "4986454028622869431";
+	private static String username = "msilverio324@gmail.com";
+	private static String password = "salsaforceg0";
+	private OAuthSalesforce auth = new OAuthSalesforce();
+	
+	public FreshSalsaSendServlet() {
+		auth.login(client_id, client_secret, username, password);
+	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 33");
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 37" +
+				"");
+		resp.getWriter().println(InetAddress.getLocalHost().getHostAddress());
 		sendEvent("hi","there", resp);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -56,7 +65,7 @@ public class FreshSalsaSendServlet extends HttpServlet {
 					{
 						sb.setLength(sb.length()-1);
 					}
-					//sendEvent(title,sb.toString(), resp);
+					//sendEvent(title, sb.toString(), resp);
 				}
 			}
 			
@@ -77,24 +86,6 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	}
 	
 	public void sendEvent(String name, String attributes, HttpServletResponse resp) throws IOException {
-		resp.getWriter().println("something works...");
-		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-		ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
-		RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();
-		try {
-			/*soapPool.configureOrg(orgID, username, password, 5);
-			BindingConfig bindingConfig = soapPool.getConnectionBundle(orgID).getBindingConfig();
-			String host = new URL(bindingConfig.getPartnerServerUrl()).getHost();
-			String token = bindingConfig.getSessionId();
-			ConnectionBundle bundle = soapPool.getConnectionBundle(orgID);
-			restPool.configureOrg(orgID, host, token);
-			ApexConnection apexConn = bundle.getApexConnection();
-			ExecuteAnonResult result = apexConn.executeAnonymous("EventAdder.addEvent('" + name + "', '" + attributes + "');");
-			System.out.println(result.isCompiled());*/
-		}
-		catch (Exception exc) {
-			resp.getWriter().println("Hax error: " + exc.getClass().toString() + ": "+ exc.getMessage());
-		}
-
+		auth.createObject("/services/data/v20.0/sobjects/Account/", "{\"Name\":\"testSomethingElse\"}", "application/json");
 	}
 }

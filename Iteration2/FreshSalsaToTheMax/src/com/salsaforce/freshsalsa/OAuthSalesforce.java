@@ -1,3 +1,5 @@
+package com.salsaforce.freshsalsa;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +21,7 @@ public class OAuthSalesforce {
 
 	private String token = "";
 	private String instanceUrl = "";
-	
+
 	private String buildQueryString(Map<String, String> urlParams) {
 		StringBuilder query = new StringBuilder();
 		boolean first = true;
@@ -96,8 +98,8 @@ public class OAuthSalesforce {
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
 		connection.setRequestProperty("charset", "UTF-8");
-		connection.setRequestProperty("Content-Length",
-				"" + Integer.toString(query.getBytes().length));
+//		connection.setRequestProperty("Content-Length",
+//				"" + Integer.toString(query.getBytes().length));
 		if (headers != null) {
 			for (Entry<String, String> header : headers.entrySet()) {
 				System.out.println(encode(header.getKey()) + " "
