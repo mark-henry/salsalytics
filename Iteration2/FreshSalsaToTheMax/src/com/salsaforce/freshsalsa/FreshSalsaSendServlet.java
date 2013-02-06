@@ -18,20 +18,21 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	
 	private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
 	private static String client_secret = "4986454028622869431";
-	private static String username = "msilverio324@gmail.com";
-	private static String password = "salsaforceg0";
+	private static String username = "e_navis@yahoo.com";
+	private static String password = "salsaforceg0o0Gxekj8JWjBftIBCQpMpyIcQ";
 	private OAuthSalesforce auth = new OAuthSalesforce();
+	private static String loginResp = "";
 	
 	public FreshSalsaSendServlet() {
-		auth.login(client_id, client_secret, username, password);
+		loginResp = auth.login(client_id, client_secret, username, password);
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 37" +
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 40" +
 				"");
-		resp.getWriter().println(InetAddress.getLocalHost().getHostAddress());
+		resp.getWriter().println(loginResp);
 		sendEvent("hi","there", resp);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -86,6 +87,6 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	}
 	
 	public void sendEvent(String name, String attributes, HttpServletResponse resp) throws IOException {
-		auth.createObject("/services/data/v20.0/sobjects/Account/", "{\"Name\":\"testSomethingElse\"}", "application/json");
+		resp.getWriter().println(auth.createObject("/services/data/v20.0/sobjects/Account/", "{\"Name\":\"testSomethingElse\"}", "application/json"));
 	}
 }
