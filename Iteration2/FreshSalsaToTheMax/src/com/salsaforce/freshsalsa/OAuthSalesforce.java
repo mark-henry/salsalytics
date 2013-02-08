@@ -13,11 +13,21 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * This class provides a way to log into Salesforce and create sObjects using the rest api.
+ * @author Cory Karras
+ * @version 1.0
+ */
 public class OAuthSalesforce {
 	private String token = "";
 	private String instanceUrl = "";
 
-	private String buildQueryString(Map<String, String> urlParams) {
+	/**
+	 * Builds the querystring from a map of key value pairs.
+	 * @param urlParams Map of key value pairs to be put into they querystring.
+	 * @return The querystring with url encoded parameters.
+	 */
+	public String buildQueryString(Map<String, String> urlParams) {
 		StringBuilder query = new StringBuilder();
 		boolean first = true;
 
@@ -33,14 +43,6 @@ public class OAuthSalesforce {
 		return query.toString();
 	}
 
-	/**
-	 * Turns an InputStream into a String.
-	 * 
-	 * @param is
-	 *            The Inputstream.
-	 * @return The String equivalent of the InputStream or an empty String if it
-	 *         is null.
-	 */
 	private String inputStreamToString(InputStream is) {
 		String str = "";
 
@@ -54,36 +56,22 @@ public class OAuthSalesforce {
 		return str;
 	}
 
-	public String doGet(String requestUrl, String query)
-			throws MalformedURLException, Exception {
-		URL url = null;
-		HttpURLConnection connection = null;
-		InputStream response = null;
-
-		if (query == null || query == "") {
-			url = new URL(requestUrl);
-		} else {
-			url = new URL(requestUrl + "?" + query);
-		}
-		connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("GET");
-		connection.setRequestProperty("Accept-Charset", "UTF-8");
-		try {
-			response = connection.getInputStream();
-			return inputStreamToString(response);
-		} catch (Exception exc) {
-			String message = connection.getResponseCode() + " "
-					+ inputStreamToString(connection.getErrorStream());
-			throw new Exception(message, exc);
-		}
-	}
-
+	/**
+	 * Sends a post to a url.
+	 * @param requestUrl The url to post to.
+	 * @param headers Map of headers for the request.
+	 * @param body What should be written to the body of the post.
+	 * @return The response from the request that was sent.
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws Exception
+	 */
 	public String doPost(String requestUrl, Map<String, String> headers,
-			String query) throws MalformedURLException, IOException, Exception {
+			String body) throws MalformedURLException, IOException, Exception {
 		URL url = new URL(requestUrl);
 		System.out.println(requestUrl);
-		if (query == null) {
-			query = "";
+		if (body == null) {
+			body = "";
 		}
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setDoOutput(true);
@@ -104,7 +92,7 @@ public class OAuthSalesforce {
 		connection.setUseCaches(false);
 
 		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		wr.writeBytes(query);
+		wr.writeBytes(body);
 		wr.close();
 		System.out.println(connection.getResponseCode());
 		try {
@@ -117,6 +105,11 @@ public class OAuthSalesforce {
 		}
 	}
 
+	/**
+	 * Wrapper function for url encoding things for the querystring.
+	 * @param urlParam A parameter to encode.
+	 * @return The encoded parameter or an empty string on error.
+	 */
 	public String encode(String urlParam) {
 		String charset = "UTF-8";
 		try {
@@ -136,6 +129,14 @@ public class OAuthSalesforce {
 		}
 	}
 
+	/**
+	 * Logs into Salesforce using the provided credentials and sets the token and instanceUrl. This must be called before creating objects.
+	 * @param client_id The user's client id.
+	 * @param client_secret The user's client_secret.
+	 * @param username The user's username.
+	 * @param password The user's password.
+	 * @return The response from the server.
+	 */
 	public String login(String client_id, String client_secret,
 			String username, String password) {
 		String requestUrl = "https://login.salesforce.com/services/oauth2/token";
@@ -152,6 +153,13 @@ public class OAuthSalesforce {
 			responseBody = doPost(requestUrl, null, buildQueryString(query));
 			token = getValueFromJson(responseBody, "access_token");
 			instanceUrl = getValueFromJson(responseBody, "instance_url");
+			/* Workaround for token expiring message. (Bug: SALS-62 - 2/8/2013) */
+			if (token.compareTo("") == 0) {
+				query.put("password", "");
+				doPost(requestUrl, null, buildQueryString(query));
+				query.put("password", password);
+				responseBody = doPost(requestUrl, null, buildQueryString(query));
+			}
 			return responseBody;
 		} catch (MalformedURLException e) {
 			System.err.println("Bad Url");
@@ -165,7 +173,14 @@ public class OAuthSalesforce {
 		}
 	}
 
-	public String createObject(String restApiUrl, String params,
+	/**
+	 * Creates an object in salesforce.
+	 * @param restApiUrl The part of the rest api to call.
+	 * @param body The representation of the object to send to salesforce.
+	 * @param contentType The content type of the body.
+	 * @return The results from the request.
+	 */
+	public String createObject(String restApiUrl, String body,
 			String contentType) {
 		if (token == null || instanceUrl == null || token.compareTo("") == 0
 				|| instanceUrl.compareTo("") == 0) {
@@ -175,7 +190,7 @@ public class OAuthSalesforce {
 		headers.put("Authorization", "Bearer " + token);
 		headers.put("Content-Type", contentType);
 		try {
-			return doPost(instanceUrl + restApiUrl, headers, params);
+			return doPost(instanceUrl + restApiUrl, headers, body);
 		} catch (Exception exc) {
 			return exc.getMessage();
 		}

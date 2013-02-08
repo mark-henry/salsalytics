@@ -30,14 +30,14 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 45" +
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 47" +
 				"");
 		resp.getWriter().println(loginResp);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		TransactionOptions options = TransactionOptions.Builder.withXG(true);
 		Transaction txn = datastore.beginTransaction(options);
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb;
 		
 		try {
 			Query q = new Query("Event");
@@ -45,6 +45,7 @@ public class FreshSalsaSendServlet extends HttpServlet {
 				datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
 			for (Entity curr : results)
 			{
+				sb = new StringBuilder();
 				String title = "";
 				Map<String,Object> props = curr.getProperties();
 				
