@@ -30,13 +30,13 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 40" +
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 45" +
 				"");
 		resp.getWriter().println(loginResp);
-		sendEvent("hi","there", resp);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Transaction txn = datastore.beginTransaction();
+		TransactionOptions options = TransactionOptions.Builder.withXG(true);
+		Transaction txn = datastore.beginTransaction(options);
 		StringBuilder sb = new StringBuilder();
 		
 		try {
@@ -54,10 +54,9 @@ public class FreshSalsaSendServlet extends HttpServlet {
 					{
 						title = props.get(key) + "";
 					}
-					else 
+					else
 					{
 						sb.append(key + ":" + props.get(key) + ",");
-						resp.getWriter().println(key + " " + props.get(key));
 					}
 				}
 				if (!title.equals(""))
@@ -66,11 +65,10 @@ public class FreshSalsaSendServlet extends HttpServlet {
 					{
 						sb.setLength(sb.length()-1);
 					}
-					//sendEvent(title, sb.toString(), resp);
+					sendEvent(title, sb.toString(), resp);
 				}
 			}
 			
-			// TODO: Clear datastore of elements that were sent
 			List<Key> keysToDelete = new ArrayList<Key>();
 			for (Entity e : results) {
 				keysToDelete.add(e.getKey());
@@ -87,6 +85,7 @@ public class FreshSalsaSendServlet extends HttpServlet {
 	}
 	
 	public void sendEvent(String name, String attributes, HttpServletResponse resp) throws IOException {
-		resp.getWriter().println(auth.createObject("/services/data/v20.0/sobjects/Account/", "{\"Name\":\"testSomethingElse\"}", "application/json"));
+		resp.getWriter().println(name + "\n" + attributes);
+		resp.getWriter().println(auth.createObject("/services/apexrest/EventAdder/", "{\"name\":\"" + name + "\", \"attributes\":\"" + attributes + "\"}", "application/json"));
 	}
 }

@@ -14,11 +14,6 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class OAuthSalesforce {
-	private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
-	private static String client_secret = "4986454028622869431";
-	private static String username = "msilverio324@gmail.com";
-	private static String password = "salsaforceg0";
-
 	private String token = "";
 	private String instanceUrl = "";
 
@@ -43,7 +38,7 @@ public class OAuthSalesforce {
 	 * 
 	 * @param is
 	 *            The Inputstream.
-	 * @return The String equivilant of the InputStream or an empty String if it
+	 * @return The String equivalent of the InputStream or an empty String if it
 	 *         is null.
 	 */
 	private String inputStreamToString(InputStream is) {
@@ -98,8 +93,6 @@ public class OAuthSalesforce {
 		connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
 		connection.setRequestProperty("charset", "UTF-8");
-//		connection.setRequestProperty("Content-Length",
-//				"" + Integer.toString(query.getBytes().length));
 		if (headers != null) {
 			for (Entry<String, String> header : headers.entrySet()) {
 				System.out.println(encode(header.getKey()) + " "
@@ -185,22 +178,6 @@ public class OAuthSalesforce {
 			return doPost(instanceUrl + restApiUrl, headers, params);
 		} catch (Exception exc) {
 			return exc.getMessage();
-		}
-	}
-
-	public static void main(String[] args) {
-		OAuthSalesforce instance = new OAuthSalesforce();
-		String responseBody = instance.login(client_id, client_secret,
-				username, password);
-		System.out.println(responseBody);
-		System.out.println(instance.token);
-		if (responseBody.compareTo("") != 0) {
-			String contentType = "application/json";
-			String params = "{\"Name\":\"test\"}";
-			String restApiUrl = "/services/data/v20.0/sobjects/Account/";
-			String response = instance.createObject(restApiUrl, params,
-					contentType);
-			System.out.println(response);
 		}
 	}
 }
