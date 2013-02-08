@@ -41,7 +41,7 @@ public class OAuthSalesforce {
 	 * 
 	 * @param is
 	 *            The Inputstream.
-	 * @return The String equivilant of the InputStream or an empty String if it
+	 * @return The String equivalent of the InputStream or an empty String if it
 	 *         is null.
 	 */
 	private String inputStreamToString(InputStream is) {
