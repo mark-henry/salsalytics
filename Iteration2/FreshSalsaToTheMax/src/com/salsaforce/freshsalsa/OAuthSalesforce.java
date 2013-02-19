@@ -135,10 +135,11 @@ public class OAuthSalesforce {
 	 * @param client_secret The user's client_secret.
 	 * @param username The user's username.
 	 * @param password The user's password.
+	 * @param securityToken Token emailed from salesforce when user changes password.
 	 * @return The response from the server.
 	 */
 	public String login(String client_id, String client_secret,
-			String username, String password) {
+			String username, String password, String securityToken) {
 		String requestUrl = "https://login.salesforce.com/services/oauth2/token";
 		Map<String, String> query = new HashMap<String, String>();
 		String responseBody = "";
@@ -147,7 +148,7 @@ public class OAuthSalesforce {
 		query.put("client_id", client_id);
 		query.put("client_secret", client_secret);
 		query.put("username", username);
-		query.put("password", password);
+		query.put("password", password + securityToken);
 
 		try {
 			responseBody = doPost(requestUrl, null, buildQueryString(query));
@@ -155,9 +156,9 @@ public class OAuthSalesforce {
 			instanceUrl = getValueFromJson(responseBody, "instance_url");
 			/* Workaround for token expiring message. (Bug: SALS-62 - 2/8/2013) */
 			if (token.compareTo("") == 0) {
-				query.put("password", "");
-				doPost(requestUrl, null, buildQueryString(query));
 				query.put("password", password);
+				doPost(requestUrl, null, buildQueryString(query));
+				query.put("password", password + securityToken);
 				responseBody = doPost(requestUrl, null, buildQueryString(query));
 			}
 			return responseBody;
