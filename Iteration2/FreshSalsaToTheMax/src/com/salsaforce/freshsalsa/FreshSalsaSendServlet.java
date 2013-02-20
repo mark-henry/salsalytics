@@ -1,13 +1,16 @@
 package com.salsaforce.freshsalsa;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import com.teamlazerbeez.crm.sf.rest.*;
 import com.teamlazerbeez.crm.sf.soap.*;
-
-import java.net.URL;
 import javax.servlet.http.*;
+
+import org.apache.jsp.ah.datastoreViewerHead_jsp;
 
 import com.google.appengine.api.datastore.*;
 
@@ -16,86 +19,67 @@ import com.google.appengine.api.datastore.*;
 @SuppressWarnings("serial")
 public class FreshSalsaSendServlet extends HttpServlet {
 	
-	static String orgID = "00DE0000000e66B";
-	static String username = "msilverio324@gmail.com";
-	static String password = "salsaforceg0";
+	private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
+	private static String client_secret = "4986454028622869431";
+	private static String username = "e_navis@yahoo.com";
+	private static String password = "salsaforceg0";
+	private static String securityToken = "o0Gxekj8JWjBftIBCQpMpyIcQ";
+	private OAuthSalesforce auth = new OAuthSalesforce();
+	private static String loginResp = "";
+	
+	public FreshSalsaSendServlet() {
+		loginResp = auth.login(client_id, client_secret, username, password, securityToken);
+	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 3");
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 49" +
+				"");
+		resp.getWriter().println(loginResp);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Transaction txn = datastore.beginTransaction();
-		StringBuilder sb = new StringBuilder();
-		
-		try {
-			Query q = new Query("Event");
-			List<Entity> results = 
-				datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
-			for (Entity curr : results)
+		StringBuilder sb;
+
+		Query q = new Query("Event");
+		List<Entity> results = 
+			datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
+		for (Entity curr : results)
+		{
+			sb = new StringBuilder();
+			String title = "";
+			Map<String,Object> props = curr.getProperties();
+			
+			for (String key : props.keySet())
 			{
-				String title = "";
-				Map<String,Object> props = curr.getProperties();
-				
-				for (String key : props.keySet())
+				if (key.equals("SalsalyticsEventTitle")) 
 				{
-					if (key.equals("SalsalyticsEventTitle")) 
-					{
-						title = props.get(key) + "";
-					}
-					else 
-					{
-						sb.append(key + ":" + props.get(key) + ",");
-						resp.getWriter().println(key + " " + props.get(key));
-					}
+					title = props.get(key) + "";
 				}
-				if (!title.equals(""))
+				else
 				{
-					if (sb.length() > 0 && (sb.charAt(sb.length()-1)) == ',')
-					{
-						sb.setLength(sb.length()-1);
-					}
-					sendEvent(title,sb.toString(), resp);
+					sb.append(key + ":" + props.get(key) + ",");
 				}
 			}
-			txn.commit();
-		}
-		finally {
-			if (txn.isActive()) {
-				txn.rollback();
+			if (!title.equals(""))
+			{
+				if (sb.length() > 0 && (sb.charAt(sb.length()-1)) == ',')
+				{
+					sb.setLength(sb.length()-1);
+				}
+				sendEvent(title, sb.toString(), resp);
 			}
 		}
+		
+		List<Key> keysToDelete = new ArrayList<Key>();
+		for (Entity e : results) {
+			keysToDelete.add(e.getKey());
+		}
+		datastore.delete(keysToDelete);
 	}
 	
-	public void sendEvent(String name, String attributes, HttpServletResponse resp) {
-		try {
-			ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
-			RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();
-		}
-		catch (Exception exc) 
-		{
-			try {
-				resp.getWriter().print(exc.getStackTrace());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		/*
-		try {
-			soapPool.configureOrg(orgID, username, password, 5);
-			BindingConfig bindingConfig = soapPool.getConnectionBundle(orgID).getBindingConfig();
-			String host = new URL(bindingConfig.getPartnerServerUrl()).getHost();
-			String token = bindingConfig.getSessionId();
-			ConnectionBundle bundle = soapPool.getConnectionBundle(orgID);
-			restPool.configureOrg(orgID, host, token);
-			ApexConnection apexConn = bundle.getApexConnection();
-			ExecuteAnonResult result = apexConn.executeAnonymous("EventAdder.addEvent('" + name + "', '" + attributes + "');");
-			System.out.println(result.isCompiled());
-		}
-		catch (Exception exc) {
-			System.err.println("Hax error: " + exc.getClass().toString() + ": "+ exc.getMessage());
-		}*/
+	public void sendEvent(String name, String attributes, HttpServletResponse resp) throws IOException {
+		resp.getWriter().println(name + "\n" + attributes);
+		resp.getWriter().println(auth.createObject("/services/apexrest/EventAdder/", "{\"name\":\"" + name + "\", \"attributes\":\"" + attributes + "\"}", "application/json"));
 	}
 }
