@@ -14,12 +14,12 @@ public class EventSender {
 	
 	
 	
-	
+/*	
 	public static void main(String[] args) {
 		EventSender sender = new EventSender();
 		sender.sendEvent("test_login", "Gender:Male");
-	} 
-	
+	}
+*/	
 	public void sendEvent(String name, String attributes) {
 		ConnectionPool<String> soapPool = new ConnectionPoolImpl<String>(orgID);
 		RestConnectionPoolImpl<String> restPool = new RestConnectionPoolImpl<String>();

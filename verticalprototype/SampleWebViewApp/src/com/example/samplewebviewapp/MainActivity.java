@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
 		webView = (WebView) findViewById(R.id.webView1);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(new OverrideWebViewClient());
-		webView.loadUrl("https://c.na9.visual.force.com/apex/TestMainPage");
+		webView.loadUrl("https://brpage@bitbucket.org/djanzen/salsaforce.git");
     }
 
     @Override
