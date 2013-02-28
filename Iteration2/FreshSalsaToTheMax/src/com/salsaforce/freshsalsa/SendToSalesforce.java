@@ -16,22 +16,29 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 
 public class SendToSalesforce implements Getable {
-	private static String client_id = "3MVG9y6x0357HlecfGyTDPCokSbHzObA_utCo6adVHBrDYsdyWJrSHI2kFNggsHrQfOVV1pRDqxjuCgZvVi05";
-	private static String client_secret = "4986454028622869431";
-	private static String username = "e_navis@yahoo.com";
-	private static String password = "salsaforceg0";
-	private static String securityToken = "o0Gxekj8JWjBftIBCQpMpyIcQ";
 	
 	private OAuthSalesforce auth = new OAuthSalesforce();
 	private static String loginResp = "";
 	
 	public SendToSalesforce() {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query("Config");
+		List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		if (results.size() == 0) {
+			//Not configured
+			return;
+		}
+		String client_id = (String)results.get(0).getProperty("clientID");
+		String client_secret = (String)results.get(0).getProperty("clientSecret");
+		String username = (String)results.get(0).getProperty("username");
+		String password = (String)results.get(0).getProperty("password");
+		String securityToken = (String)results.get(0).getProperty("token");
 		loginResp = auth.login(client_id, client_secret, username, password, securityToken);
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("This page sends the data in the datastore to salesforce. 50" +
+		resp.getWriter().println("This page sends the data in the datastore to salesforce. 51" +
 				"");
 		resp.getWriter().println(loginResp);
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
