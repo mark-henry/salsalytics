@@ -125,4 +125,13 @@ class Event {
 			return "";
 		}
 	}
+	
+	/**
+	 * A getter for the query string for testing purposes
+	 * 
+	 * @return the queryString currently built
+	 */
+	String getQuery() {
+		return query;
+	}
 }
