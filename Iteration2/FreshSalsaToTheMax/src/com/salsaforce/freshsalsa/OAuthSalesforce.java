@@ -47,11 +47,13 @@ public class OAuthSalesforce {
 		String str = "";
 
 		if (is != null) {
-			Scanner scan = new Scanner(is).useDelimiter("\\A");
+			Scanner initScan = new Scanner(is);
+			Scanner scan = initScan.useDelimiter("\\A");
 			if (scan.hasNext()) {
 				str = scan.next();
 			}
 			scan.close();
+			initScan.close();
 		}
 		return str;
 	}

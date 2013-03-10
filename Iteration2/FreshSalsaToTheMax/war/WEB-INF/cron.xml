@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cronentries>
-    <cron>
-        <url>/freshsalsasend</url>
-        <description>Flush the cache 5000 times a day, sending Events to salesforce</description>
-        <schedule>every 1 hours</schedule>
-    </cron>
-</cronentries>

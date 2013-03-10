@@ -1,6 +1,5 @@
 package com.salsaforce.sampleapp;
 
-//import com.salsalytics.apiwrapper.EventSender;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -8,7 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-//import com.salsalytics.*;
+import com.salsalytics.*;
+import com.salsalytics.apiwrapper.EventSender;
 
 public class MainActivity extends Activity {
 
