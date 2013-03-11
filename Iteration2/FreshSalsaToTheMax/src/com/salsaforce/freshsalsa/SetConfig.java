@@ -20,7 +20,7 @@ public class SetConfig implements Postable {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		
-		Query q = new Query("Event");
+		Query q = new Query("Config");
 		List<Entity> results = datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		List<Key> keysToDelete = new ArrayList<Key>();
 		for (Entity e : results) {
