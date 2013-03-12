@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
 	private void showPopUp() {
 
    	 AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
-   	 helpBuilder.setTitle("API Call");
+   	 helpBuilder.setTitle("Happy Llama Farmer");
    	 helpBuilder.setMessage("Llama chosen!");
    	 helpBuilder.setPositiveButton("OK",
    	   new DialogInterface.OnClickListener() {
