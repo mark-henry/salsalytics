@@ -1,5 +1,8 @@
 package com.salsaforce.sampleapp;
 
+//import com.salsalytics.apiwrapper.EventSender;
+import java.util.TreeMap;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -7,8 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import com.salsalytics.*;
-import com.salsalytics.apiwrapper.EventSender;
+import Salsalytics2.*;
+
 
 public class MainActivity extends Activity {
 
@@ -18,12 +21,17 @@ public class MainActivity extends Activity {
     	Button femaleButton;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        EventSender.setURL("http://freshsalsaforce.appspot.com/ReceiveEvents");
         maleButton = (Button) findViewById(R.id.malebutton);
         maleButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EventSender sender = new EventSender();
-				sender.sendEvent("test_login", "Gender:Male");
+				TreeMap<String, String> map = new TreeMap<String, String>();
+				
+				map.put("Gender", "Male");
+				EventSender.sendData("test_login", map);
+				map.clear();
 				showPopUp();
 			}
 		});
@@ -32,8 +40,10 @@ public class MainActivity extends Activity {
         femaleButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EventSender sender = new EventSender();
-				sender.sendEvent("test_login", "Gender:Female");
+				TreeMap<String, String> map = new TreeMap<String, String>();				
+				map.put("Gender", "Female");
+				EventSender.sendData("test_login", map);
+				map.clear();
 				showPopUp();
 			}
 		});
