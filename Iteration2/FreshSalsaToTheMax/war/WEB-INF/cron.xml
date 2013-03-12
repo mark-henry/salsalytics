@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+    <cron>
+        <url>/SendToSalesforce</url>
+        <description>Flush the cache x times a day, sending Events to salesforce</description>
+        <schedule>every 5 minutes</schedule>
+    </cron>
+</cronentries>
