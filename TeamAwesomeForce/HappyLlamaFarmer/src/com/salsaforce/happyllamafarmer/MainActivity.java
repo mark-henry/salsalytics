@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				TreeMap<String, String> map = new TreeMap<String, String>();
 				
-				map.put("Llama", "Red");
+				map.put("LlamaColor", "Red");
 				EventSender.sendData("HappyLlamaFarmer", map);
 				map.clear();
 				showPopUp();
@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				TreeMap<String, String> map = new TreeMap<String, String>();
 				
-				map.put("Llama", "Green");
+				map.put("LlamaColor", "Green");
 				EventSender.sendData("HappyLlamaFarmer", map);
 				map.clear();
 				showPopUp();
@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				TreeMap<String, String> map = new TreeMap<String, String>();
 				
-				map.put("Llama", "Blue");
+				map.put("LlamaColor", "Blue");
 				EventSender.sendData("HappyLlamaFarmer", map);
 				map.clear();
 				showPopUp();
@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				TreeMap<String, String> map = new TreeMap<String, String>();
 				
-				map.put("Llama", "Yellow");
+				map.put("LlamaColor", "Yellow");
 				EventSender.sendData("HappyLlamaFarmer", map);
 				map.clear();
 				showPopUp();
