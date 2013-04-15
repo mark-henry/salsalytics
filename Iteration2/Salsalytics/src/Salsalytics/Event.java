@@ -25,7 +25,6 @@ import android.util.Log;
  * @author Martin Silverio, msilverio324@gmail.com
  */
 class Event {
-	//Salsalytics "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	private static String url;
 	private String charset = "UTF-8";
 	private String query = "?SalsalyticsEventTitle=";

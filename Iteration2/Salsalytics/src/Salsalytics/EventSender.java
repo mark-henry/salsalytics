@@ -2,7 +2,6 @@ package Salsalytics;
 
 import java.util.Map;
 
-
 /**
  * <p>EventSender is the public interface for the Salsalytics wrapper. This
  * class is thread safe singleton that can be safely used from anywhere 
@@ -17,6 +16,7 @@ public class EventSender {
         private static volatile EventSender INSTANCE;
         private static Event event;
         private static AsyncTaskSender ats;
+        private static String urlName;
 
         private EventSender() {
         	event = new Event();
@@ -27,6 +27,7 @@ public class EventSender {
         	if (INSTANCE == null) {
         		INSTANCE = new EventSender();
         	}              
+        	event = new Event();
         	ats = new AsyncTaskSender(event);
               
         	return INSTANCE;
@@ -40,7 +41,8 @@ public class EventSender {
          */
         public static void setURL(String URL) {
         	getInstance();
-        	event.setServer(URL);
+        	urlName = URL;
+        	//event.setServer(URL);
         }
 
         /**
@@ -54,6 +56,7 @@ public class EventSender {
          */
         public static void sendData(String title, Map<String, String> attributes) {
         	getInstance();
+        	event.setServer(urlName);
         	event.addData(title, attributes);
         	ats.execute(event.getServer());
         }
