@@ -1,6 +1,7 @@
 package Salsalytics;
 
 import java.util.Map;
+import android.os.*;
 
 /**
  * <p>EventSender is the public interface for the Salsalytics wrapper. This
@@ -17,7 +18,8 @@ public class EventSender {
         private static AsyncTaskSender ats;
         private static String urlName, appName;
         private static Map<String, String> constantMap;
-
+        public static DeviceInformation DeviceInformationCollected;
+        
         private EventSender() {
         	event = new Event(urlName, appName, constantMap);
         	ats = new AsyncTaskSender(event);
@@ -59,7 +61,7 @@ public class EventSender {
          * @param appName the name of the app that the even sender is logging data for.
          */
         public static void setAppName(String applicationName) {
-        	if(applicationName != null && !applicationName.isEmpty())
+        	if(applicationName != null && !applicationName.equals(""))
         		appName = applicationName;
         }
         
@@ -74,5 +76,98 @@ public class EventSender {
          */
         public static void addConstantData(Map<String, String> constantData) {
         	constantMap = constantData;
+        }
+        
+        private class DeviceInformation {
+        	private boolean androidVersionNumberCollected = true;
+        	private boolean androidVersionCodenameCollected = false;
+        	private boolean modelCollected = false;
+        	private boolean manufactureCollected = false;
+        	private boolean deviceNameCollected = false;
+        	private boolean wirelessServiceProviderCollected = false;
+        	
+        	private String androidVersionNumber;
+        	private String androidVersionCodename = Build.VERSION.CODENAME;
+        	private String model = Build.MODEL;
+        	private String manufacture = Build.MANUFACTURER;
+        	private String deviceName = Build.DEVICE;
+        	private String wirelessServiceProvider;
+        	
+        	
+        	/**
+			 * @return the androidVersionNumberCollected
+			 */
+			public boolean isAndroidVersionNumberCollected() {
+				return androidVersionNumberCollected;
+			}
+			/**
+			 * @param androidVersionNumberCollected the androidVersionNumberCollected to set
+			 */
+			public void setAndroidVersionNumberCollected(
+					boolean androidVersionNumberCollected) {
+				this.androidVersionNumberCollected = androidVersionNumberCollected;
+			}
+			/**
+			 * @return the androidVersionCodenameCollected
+			 */
+			public boolean isAndroidVersionCodenameCollected() {
+				return androidVersionCodenameCollected;
+			}
+			/**
+			 * @param androidVersionCodenameCollected the androidVersionCodenameCollected to set
+			 */
+			public void setAndroidVersionCodenameCollected(
+					boolean androidVersionCodenameCollected) {
+				this.androidVersionCodenameCollected = androidVersionCodenameCollected;
+			}
+			/**
+			 * @return the modelCollected
+			 */
+			public boolean isModelCollected() {
+				return modelCollected;
+			}
+			/**
+			 * @param modelCollected the modelCollected to set
+			 */
+			public void setModelCollected(boolean modelCollected) {
+				this.modelCollected = modelCollected;
+			}
+			/**
+			 * @return the manufactureCollected
+			 */
+			public boolean isManufactureCollected() {
+				return manufactureCollected;
+			}
+			/**
+			 * @param manufactureCollected the manufactureCollected to set
+			 */
+			public void setManufactureCollected(boolean manufactureCollected) {
+				this.manufactureCollected = manufactureCollected;
+			}
+			/**
+			 * @return the deviceNameCollected
+			 */
+			public boolean isDeviceNameCollected() {
+				return deviceNameCollected;
+			}
+			/**
+			 * @param deviceNameCollected the deviceNameCollected to set
+			 */
+			public void setDeviceNameCollected(boolean deviceNameCollected) {
+				this.deviceNameCollected = deviceNameCollected;
+			}
+			/**
+			 * @return the wirelessServiceProviderCollected
+			 */
+			public boolean isWirelessServiceProviderCollected() {
+				return wirelessServiceProviderCollected;
+			}
+			/**
+			 * @param wirelessServiceProviderCollected the wirelessServiceProviderCollected to set
+			 */
+			public void setWirelessServiceProviderCollected(
+					boolean wirelessServiceProviderCollected) {
+				this.wirelessServiceProviderCollected = wirelessServiceProviderCollected;
+			}
         }
 }

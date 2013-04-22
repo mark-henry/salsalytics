@@ -79,20 +79,15 @@ class Event {
 	 * relating to the event.
 	 */
 	void addData(String title, Map<String, String> attributes) {
-		//TODO add appName and constantData
-		
-		Log.d("Query", "wwwttttffff");
 		
 		query += title;
-		if(appName != null && !appName.isEmpty())
+		if(appName != null && !appName.equals(""))
 			query += "&" + "AppName=" + this.appName;
 		
 		if(this.constantData != null && !this.constantData.isEmpty()) 
 			query += buildQueryString(this.constantData);
 		
 		query += buildQueryString(attributes);
-		
-		Log.d("Query", query);
 	}
 
 	/**
