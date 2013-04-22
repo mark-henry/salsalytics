@@ -25,10 +25,17 @@ import android.util.Log;
  * @author Martin Silverio, msilverio324@gmail.com
  */
 class Event {
-	private static String url;
 	private String charset = "UTF-8";
 	private String query = "?SalsalyticsEventTitle=";
-
+	private String url, appName;
+	private Map<String, String> constantData;
+	
+	Event(String url, String appName, Map<String, String> constantData) {
+		this.url = url;
+		this.appName = appName;
+		this.constantData = constantData;
+	}
+	
 	/**
 	 * Sends data to the users Google App Engine site.
 	 * 
@@ -36,7 +43,7 @@ class Event {
 	 */
 	int send() throws MalformedURLException, IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url + query)
-				.openConnection();
+	     .openConnection();
 		conn.setRequestProperty("Accept-Charset", charset);
 		@SuppressWarnings("unused")
 		InputStream response = new BufferedInputStream(conn.getInputStream());
@@ -44,16 +51,6 @@ class Event {
 		query = "?SalsalyticsEventTitle=";
 
 		return status;
-	}
-
-	/**
-	 * Sets the server to send the data to.
-	 * 
-	 * @param serverName a String containing the URl of the recieving side
-	 * of the serve
-	 */
-	void setServer(String serverName) {
-		url = serverName;
 	}
 
 	/**
@@ -82,8 +79,20 @@ class Event {
 	 * relating to the event.
 	 */
 	void addData(String title, Map<String, String> attributes) {
-		query += title + "&" + buildQueryString(attributes);
-
+		//TODO add appName and constantData
+		
+		Log.d("Query", "wwwttttffff");
+		
+		query += title;
+		if(appName != null && !appName.isEmpty())
+			query += "&" + "AppName=" + this.appName;
+		
+		if(this.constantData != null && !this.constantData.isEmpty()) 
+			query += buildQueryString(this.constantData);
+		
+		query += buildQueryString(attributes);
+		
+		Log.d("Query", query);
 	}
 
 	/**
@@ -95,15 +104,9 @@ class Event {
 	 */
 	private String buildQueryString(Map<String, String> urlParams) {
 		StringBuilder query = new StringBuilder();
-		boolean first = true;
 
 		for (Entry<String, String> urlParam : urlParams.entrySet()) {
-			if (first) {
-				first = false;
-			} else {
-				query.append("&");
-			}
-			query.append(encode(urlParam.getKey()) + "="
+			query.append("&" + encode(urlParam.getKey()) + "="
 					+ encode(urlParam.getValue()));
 		}
 		return query.toString();
