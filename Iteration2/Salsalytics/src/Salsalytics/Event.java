@@ -29,11 +29,15 @@ class Event {
 	private String query = "?SalsalyticsEventTitle=";
 	private String url, appName;
 	private Map<String, String> constantData;
+	private Map<String, String> deviceInfo;
+ 	
+	//TODO change interface to have everything passed into add data
 	
-	Event(String url, String appName, Map<String, String> constantData) {
+	Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
 		this.url = url;
 		this.appName = appName;
 		this.constantData = constantData;
+		this.deviceInfo = deviceInformation;
 	}
 	
 	/**
@@ -80,9 +84,14 @@ class Event {
 	 */
 	void addData(String title, Map<String, String> attributes) {
 		
+		//TODO check for "$" in maps
+		
 		query += title;
 		if(appName != null && !appName.equals(""))
 			query += "&" + "AppName=" + this.appName;
+		
+		if(this.deviceInfo != null && !this.deviceInfo.isEmpty())
+			query += buildQueryString(this.deviceInfo);
 		
 		if(this.constantData != null && !this.constantData.isEmpty()) 
 			query += buildQueryString(this.constantData);

@@ -1,6 +1,8 @@
 package Salsalytics;
 
 import java.util.Map;
+import java.util.TreeMap;
+
 import android.os.*;
 
 /**
@@ -21,7 +23,7 @@ public class EventSender {
         public static DeviceInformation DeviceInformationCollected;
         
         private EventSender() {
-        	event = new Event(urlName, appName, constantMap);
+        	event = new Event(urlName, appName, constantMap, DeviceInformationCollected.getDeviceInfo());
         	ats = new AsyncTaskSender(event);
         }
 
@@ -111,116 +113,75 @@ public class EventSender {
         	}
         	
         	
-        	/**
-			 * @return the androidVersionNumberCollected
-			 */
-			public boolean isAndroidVersionNumberCollected() {
-				return androidVersionNumberCollected;
-			}
+        	
 			/**
 			 * @param androidVersionNumberCollected the androidVersionNumberCollected to set
 			 */
+			@SuppressWarnings("unused")
 			public void setAndroidVersionNumberCollected(
 					boolean androidVersionNumberCollected) {
 				this.androidVersionNumberCollected = androidVersionNumberCollected;
 			}
-			/**
-			 * @return the androidVersionCodenameCollected
-			 */
-			public boolean isAndroidVersionCodenameCollected() {
-				return androidVersionCodenameCollected;
-			}
+			
 			/**
 			 * @param androidVersionCodenameCollected the androidVersionCodenameCollected to set
 			 */
+			@SuppressWarnings("unused")
 			public void setAndroidVersionCodenameCollected(
 					boolean androidVersionCodenameCollected) {
 				this.androidVersionCodenameCollected = androidVersionCodenameCollected;
 			}
-			/**
-			 * @return the modelCollected
-			 */
-			public boolean isModelCollected() {
-				return modelCollected;
-			}
+			
 			/**
 			 * @param modelCollected the modelCollected to set
 			 */
+			@SuppressWarnings("unused")
 			public void setModelCollected(boolean modelCollected) {
 				this.modelCollected = modelCollected;
 			}
-			/**
-			 * @return the manufactureCollected
-			 */
-			public boolean isManufactureCollected() {
-				return manufactureCollected;
-			}
+			
 			/**
 			 * @param manufactureCollected the manufactureCollected to set
 			 */
+			@SuppressWarnings("unused")
 			public void setManufactureCollected(boolean manufactureCollected) {
 				this.manufactureCollected = manufactureCollected;
 			}
-			/**
-			 * @return the deviceNameCollected
-			 */
-			public boolean isDeviceNameCollected() {
-				return deviceNameCollected;
-			}
+			
 			/**
 			 * @param deviceNameCollected the deviceNameCollected to set
 			 */
+			@SuppressWarnings("unused")
 			public void setDeviceNameCollected(boolean deviceNameCollected) {
 				this.deviceNameCollected = deviceNameCollected;
 			}
-			/**
-			 * @return the wirelessServiceProviderCollected
-			 */
-			public boolean isWirelessServiceProviderCollected() {
-				return wirelessServiceProviderCollected;
-			}
+	
 			/**
 			 * @param wirelessServiceProviderCollected the wirelessServiceProviderCollected to set
 			 */
+			@SuppressWarnings("unused")
 			public void setWirelessServiceProviderCollected(
 					boolean wirelessServiceProviderCollected) {
 				this.wirelessServiceProviderCollected = wirelessServiceProviderCollected;
 			}
-			/**
-			 * @return the androidVersionNumber
-			 */
-			protected String getAndroidVersionNumber() {
-				return androidVersionNumber;
-			}
-			/**
-			 * @return the androidVersionCodename
-			 */
-			protected String getAndroidVersionCodename() {
-				return androidVersionCodename;
-			}
-			/**
-			 * @return the model
-			 */
-			protected String getModel() {
-				return model;
-			}
-			/**
-			 * @return the manufacture
-			 */
-			protected String getManufacture() {
-				return manufacture;
-			}
-			/**
-			 * @return the deviceName
-			 */
-			protected String getDeviceName() {
-				return deviceName;
-			}
-			/**
-			 * @return the wirelessServiceProvider
-			 */
-			protected String getWirelessServiceProvider() {
-				return wirelessServiceProvider;
+		
+			private Map<String, String> getDeviceInfo() {
+				Map<String, String>  selectedInfo = new TreeMap<String, String>();
+				
+				if(androidVersionNumberCollected)
+					selectedInfo.put("$Android Version Number", this.androidVersionNumber);
+            	if(androidVersionCodenameCollected)
+            		selectedInfo.put("$Android Version Codename", this.androidVersionCodename);
+            	if(modelCollected) 
+            		selectedInfo.put("$Model", this.model);
+            	if(manufactureCollected)
+            		selectedInfo.put("$Manufacture", this.manufacture);
+            	if(deviceNameCollected)
+            		selectedInfo.put("$Device Name", this.deviceName);
+            	if(wirelessServiceProviderCollected)
+            		selectedInfo.put("$Wireless Service Provider", this.wirelessServiceProvider);
+				
+				return selectedInfo;
 			}
         }
 }
