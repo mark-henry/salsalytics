@@ -79,19 +79,36 @@ public class EventSender {
         }
         
         private class DeviceInformation {
-        	private boolean androidVersionNumberCollected = true;
-        	private boolean androidVersionCodenameCollected = false;
-        	private boolean modelCollected = false;
-        	private boolean manufactureCollected = false;
-        	private boolean deviceNameCollected = false;
-        	private boolean wirelessServiceProviderCollected = false;
+        	private boolean androidVersionNumberCollected;
+        	private boolean androidVersionCodenameCollected;
+        	private boolean modelCollected;
+        	private boolean manufactureCollected;
+        	private boolean deviceNameCollected;
+        	private boolean wirelessServiceProviderCollected;
         	
         	private String androidVersionNumber;
-        	private String androidVersionCodename = Build.VERSION.CODENAME;
-        	private String model = Build.MODEL;
-        	private String manufacture = Build.MANUFACTURER;
-        	private String deviceName = Build.DEVICE;
+        	private String androidVersionCodename;
+        	private String model;
+        	private String manufacture;
+        	private String deviceName;
         	private String wirelessServiceProvider;
+        	
+        	
+        	private DeviceInformation() {
+        		androidVersionNumberCollected = true;
+            	androidVersionCodenameCollected = false;
+            	modelCollected = false;
+            	manufactureCollected = false;
+            	deviceNameCollected = false;
+            	wirelessServiceProviderCollected = false;
+            	
+        		androidVersionNumber = Build.VERSION.INCREMENTAL;
+        		androidVersionCodename = Build.VERSION.CODENAME;
+        		model = Build.MODEL;
+        		manufacture = Build.MANUFACTURER;
+        		deviceName = Build.DEVICE;
+        		wirelessServiceProvider = Build.BRAND;
+        	}
         	
         	
         	/**
@@ -168,6 +185,42 @@ public class EventSender {
 			public void setWirelessServiceProviderCollected(
 					boolean wirelessServiceProviderCollected) {
 				this.wirelessServiceProviderCollected = wirelessServiceProviderCollected;
+			}
+			/**
+			 * @return the androidVersionNumber
+			 */
+			protected String getAndroidVersionNumber() {
+				return androidVersionNumber;
+			}
+			/**
+			 * @return the androidVersionCodename
+			 */
+			protected String getAndroidVersionCodename() {
+				return androidVersionCodename;
+			}
+			/**
+			 * @return the model
+			 */
+			protected String getModel() {
+				return model;
+			}
+			/**
+			 * @return the manufacture
+			 */
+			protected String getManufacture() {
+				return manufacture;
+			}
+			/**
+			 * @return the deviceName
+			 */
+			protected String getDeviceName() {
+				return deviceName;
+			}
+			/**
+			 * @return the wirelessServiceProvider
+			 */
+			protected String getWirelessServiceProvider() {
+				return wirelessServiceProvider;
 			}
         }
 }
