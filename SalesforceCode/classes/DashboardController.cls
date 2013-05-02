@@ -264,4 +264,5 @@ global with sharing class DashboardController {
     global PageReference newGraph() {
         return Page.freshsalsanewgraphpage;
     }
+    //Adding a line in here for testing purposes.  Shhhhhh, don't tell Martin
 }
