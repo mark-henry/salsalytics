@@ -176,8 +176,12 @@ global with sharing class DashboardController {
 //         correctString += '<div id="chart" class="chart" key="' + queries.get(0).attribute__c + '"';
 //         correctString += 'graphName="' + queries.get(0).name + '"';
          
-         correctString = '<div class ="row"></div>';
-         //correctString = '<div class ="row"><div class="span5"><input type = "button" class = "btn btn-danger" name = "a00E0000008ddQlIAI"value = "Delete" onclick = "deleteGraph(\'a00E0000008ddQlIAI\')"/><input type = "button" class = "btn btn-info" name = "a00E0000008ddQlIAI"value = "Edit" onclick = "editRedirect(\'a00E0000008ddQlIAI\')"/><a href=singlegraph?graphid=a00E0000008ddQlIAI><div id="chart" class="chart" key="user"graphName="a00E0000008ddQl"field0="Brandon" value0=1 field1="jdoe" value1=2 chartType="null"> </div> </a> </div></div>';
+         //correctString = '<div class ="row"></div>';
+         correctString = '<div class ="row"><div class="span5">';
+         correctString+= '<input type = "button" class = "btn btn-danger" name = "' + graphID + '"value = "Delete" onclick = "deleteGraph(\''+graphID+'\')"/>';
+         correctString+= '<input type = "button" class = "btn btn-info" name = "'+graphID+'"value = "Edit" onclick = "editRedirect(\''+graphID+'\')"/>';
+         correctString+= '<a href=singlegraph?graphid='+graphID+'><div id="chart" class="chart" key="user"graphName="'+queries.get(0).name;
+         correctString+= '"field0="Brandon" value0=1 field1="jdoe" value1=2 chartType="null"> </div> </a> </div></div>';
 
          
          List<AggregateResult> slices = Database.query(queries.get(0).Query__c);
@@ -200,7 +204,10 @@ global with sharing class DashboardController {
      @IsTest
      static void testTabs() {
          DashboardController controller = new DashboardController();
-         String expected = '<ul class="nav nav-tabs"><li class="nav-header">Applications</li><li></li><li><a href="#pane1" data-toggle="tab">Miscellaneous</a></li></ul><div class="tab-content" style="background:#E6E6E6"><div id="pane1" class="tab-pane"><div class ="row"></div></div></div>';
+         String expected = '<ul class="nav nav-tabs"><li class="nav-header">Applications</li>';
+         expected+= '<li></li><li><a href="#pane1" data-toggle="tab">Miscellaneous</a></li></ul>';
+         expected+= '<div class="tab-content" style="background:#E6E6E6"><div id="pane1" class="tab-pane">';
+         expected+= '<div class ="row"></div></div></div>';
          String result = controller.getTabsForApps();
          
          System.assertEquals(expected, result); 
