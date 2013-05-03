@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.*;
 import android.preference.PreferenceManager;
 
-import android.util.*;
 
 /**
  * <p>This is the public interface for the Salsalytics EventSender package. This
