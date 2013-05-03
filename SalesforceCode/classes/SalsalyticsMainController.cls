@@ -22,12 +22,13 @@ public with sharing class SalsalyticsMainController {
     public String getMobileDashboardFormat () {
         String outputText = '';   
         Set<String> appNames =  new Set<String>();
-        List<EventAttribute__c> attributes = [select key__c, value__c from eventAttribute__c where key__c = 'AppName'];
+        List<Event__c> attributes = [select AppName__c from Event__c];
         
         //Gets only distinct App names
         appNames.add('all');
-        for(EventAttribute__c appName : attributes){
-            appNames.add(appName.value__c);    
+        for(Event__c appName : attributes){
+            if (appName != null && appName.appName__c != null) 
+                appNames.add(appName.appName__c);    
         }
         
         for(String appName : appNames){
