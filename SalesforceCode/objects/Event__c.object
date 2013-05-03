@@ -38,6 +38,15 @@
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <fields>
+        <fullName>AppName__c</fullName>
+        <externalId>false</externalId>
+        <label>AppName</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>TimeStamp__c</fullName>
         <description>When the event was recorded.</description>
         <externalId>false</externalId>

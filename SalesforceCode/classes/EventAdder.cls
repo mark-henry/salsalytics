@@ -1,17 +1,6 @@
 @RestResource(urlMapping='/EventAdder/*')
 global with sharing class EventAdder
 {
-    public void autoRun() {
- 
-       // String theId = ApexPages.currentPage().getParameters().get('id');
-        Map<String, String> parameters = ApexPages.currentPage().getParameters();
-        Set<String> theWorstSetEver = parameters.keySet();
-        String hello = 'hello';
-        for (String str : theWorstSetEver) {
-            EventAdder.addEvent(str, hello);
-        }
-    }
-
     //@HttpPost
     // Attributes in format "key:value,key:value"
     global static void addEvent(string name, string attributes)
@@ -30,14 +19,19 @@ global with sharing class EventAdder
         for (string key : attributesMap.keySet())
         {
             EventAttribute__c attribute = new EventAttribute__c();
-            attribute.key__c = key;
-            attribute.value__c = attributesMap.get(key);
-            attribute.ParentEvent__c = event.ID;
-
-            insert attribute;
+            if (key == 'AppName') {
+                event.AppName__c = attributesMap.get(key);
+                upsert event;
+            }
+            else {
+                attribute.key__c = key;
+                attribute.value__c = attributesMap.get(key);
+                attribute.ParentEvent__c = event.ID;
+                insert attribute;
+            }
         }
     }
-        
+
     @HttpPost
     global static void addEvents(List<EventWithAttrs> events)
     {
@@ -47,11 +41,17 @@ global with sharing class EventAdder
             newEvent.timestamp__c = DateTime.now();
             insert newEvent;
             for (String key : event.attrs.keySet()) {
-                EventAttribute__c attr = new EventAttribute__c();
-                attr.key__c = key;
-                attr.value__c = event.attrs.get(key);
-                attr.ParentEvent__c = newEvent.ID;
-                insert attr;
+                if (key == 'AppName') {
+                    newEvent.AppName__c = event.attrs.get(key);
+                    upsert newEvent;
+                }
+                else {
+                    EventAttribute__c attr = new EventAttribute__c();
+                    attr.key__c = key;
+                    attr.value__c = event.attrs.get(key);
+                    attr.ParentEvent__c = newEvent.ID;
+                    insert attr;
+                }
             }
         }
     }
@@ -68,6 +68,30 @@ global with sharing class EventAdder
         System.assert(events.get(1).title == 'eventName2');
         System.assert(events.get(1).attrs.get('attr1') == 'val1');
         System.assert(events.get(1).attrs.get('attr2') == 'val2');
+        
+        addEvents(events);
+        
+        List<event__c> eventsTest1 = [SELECT name FROM event__c WHERE name='eventName'];
+        System.assert(eventsTest1[0].name == 'eventName');
+        
+        for (eventAttribute__c attrib : [SELECT key__c,value__c FROM eventAttribute__c WHERE parentEvent__c=:eventsTest1[0].ID])
+        {
+            if (attrib.key__c == 'attr1')
+                System.assert(attrib.value__c == 'val1');
+            else if (attrib.key__c == 'attr2')
+                System.assert(attrib.value__c == 'val2');
+        }
+        
+        List<event__c> eventsTest2 = [SELECT name FROM event__c WHERE name='eventName2'];
+        System.assert(eventsTest2[0].name == 'eventName2');
+        
+        for (eventAttribute__c attrib : [SELECT key__c,value__c FROM eventAttribute__c WHERE parentEvent__c=:eventsTest2[0].ID])
+        {
+            if (attrib.key__c == 'attr1')
+                System.assert(attrib.value__c == 'val1');
+            else if (attrib.key__c == 'attr2')
+                System.assert(attrib.value__c == 'val2');
+        }
     }
     
     static private string jsonifyAttributes(string attribs)
@@ -78,16 +102,22 @@ global with sharing class EventAdder
         return attribs;
     }
     
-    @IsTest
+  /*  @IsTest
     static public void testAddSingleEvent()
     {
+        //Code may not actually be used in actual product
+        EventAdder adder = new EventAdder();
+        
+        //----------------------------------------------
+        
+        
         addEvent('test_login', 'user:jdoe');
         event__c event = [SELECT name FROM event__c WHERE name='test_login'];
         System.assert(event.name == 'test_login');
         
         eventAttribute__c attrib = [SELECT value__c FROM eventAttribute__c WHERE key__c='user' AND parentEvent__c=:event.ID];
         System.assert(attrib.value__c == 'jdoe');
-    }
+    }*/
     
     @IsTest
     static public void testAddManyAttributes()
@@ -107,4 +137,11 @@ global with sharing class EventAdder
                 System.assert(attrib.value__c == '20');
         }
     }
+    
+    @isTest(seeAllData=true)
+    static void testEventWithApp() 
+    {
+        
+    }
+        
 }

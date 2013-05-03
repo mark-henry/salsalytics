@@ -1,5 +1,5 @@
 <apex:page docType="html-5.0" sidebar="false" showHeader="false" controller="SingleGraphController" standardStylesheets="false">    
-    <apex:stylesheet value="{!$Resource.bootstrap}" />
+    <apex:stylesheet value="{!$Resource.bootstrapCustom}" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     
@@ -107,22 +107,23 @@
             salsaforce.SingleGraphController.deleteGraph(
                 deleteID,
                 function(result, event) {
-                    window.location.href = "https://na9.salesforce.com/apex/salsalyticsdashboard";
+                    //window.location.href = "https://na9.salesforce.com/apex/salsalyticsdashboard";
+                    window.location.href = "salsalyticsdashboard";
                 }
             );
         }     
     }
   
-    function editRedirect(graphID) {
+  function editRedirect(graphID) {
        window.location.href = 'freshsalsaeditgraphpage?graphID=' + graphID;
-    }
+} 
     
     function getDashboardURL() {
         var dashboardURL = 'salsalyticsdashboard';
         var queryString = queryObj();
         
         if (queryString['mobile'] == 'true') {
-           dashboardURL = 'SalsaforceDashboard';
+           dashboardURL = 'SalsalyticsDashboardMobile';
         }
         
         return dashboardURL;

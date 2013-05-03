@@ -14,9 +14,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>Edit</actionName>
-        <content>FreshSalsaEditGraphPage</content>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Visualforce</type>
+        <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>List</actionName>
@@ -42,6 +40,16 @@
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
+    <fields>
+        <fullName>AppName__c</fullName>
+        <description>The appname for which this graph is for</description>
+        <externalId>false</externalId>
+        <label>AppName</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
     <fields>
         <fullName>Attribute__c</fullName>
         <description>Graph attribute that is to be graphed</description>
@@ -69,6 +77,10 @@
                 <fullName>table</fullName>
                 <default>false</default>
             </picklistValues>
+            <picklistValues>
+                <fullName>timeline</fullName>
+                <default>false</default>
+            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <type>Picklist</type>
@@ -79,6 +91,15 @@
         <label>EndDate</label>
         <required>false</required>
         <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Query2__c</fullName>
+        <externalId>false</externalId>
+        <label>Query2</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Query__c</fullName>
@@ -110,6 +131,16 @@
         <description>The visual force page to redirect to when this graph is selected (only the part after na9.salesforce.com/apex/....)</description>
         <externalId>false</externalId>
         <label>VisualForcePage</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>eventNameFilter__c</fullName>
+        <description>Event name to filter the graph on</description>
+        <externalId>false</externalId>
+        <label>eventNameFilter</label>
         <length>255</length>
         <required>false</required>
         <type>Text</type>

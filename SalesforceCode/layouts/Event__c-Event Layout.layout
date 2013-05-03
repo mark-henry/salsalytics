@@ -14,6 +14,10 @@
                 <behavior>Required</behavior>
                 <field>TimeStamp__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>AppName__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

@@ -5,9 +5,7 @@
     <namespacePrefix>salsaforce</namespacePrefix>
     <types>
         <members>DashboardController</members>
-        <members>Data</members>
         <members>EventAdder</members>
-        <members>EventGraphPrototype2</members>
         <members>EventWithAttrs</members>
         <members>GraphAdder</members>
         <members>GraphDeleter</members>
@@ -17,9 +15,8 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>FreshSalsaEditGraphPage</members>
         <members>FreshSalsaNewGraphPage</members>
-        <members>SalsaforceDashboard</members>
+        <members>SalsalyticsDashboardMobile</members>
         <members>SingleGraph</members>
         <members>salsalyticsdashboard</members>
         <name>ApexPage</name>
@@ -28,14 +25,18 @@
         <members>EventAttribute__c.Key__c</members>
         <members>EventAttribute__c.ParentEvent__c</members>
         <members>EventAttribute__c.Value__c</members>
+        <members>Event__c.AppName__c</members>
         <members>Event__c.TimeStamp__c</members>
+        <members>Graph__c.AppName__c</members>
         <members>Graph__c.Attribute__c</members>
         <members>Graph__c.ChartType__c</members>
         <members>Graph__c.EndDate__c</members>
+        <members>Graph__c.Query2__c</members>
         <members>Graph__c.Query__c</members>
         <members>Graph__c.Selected__c</members>
         <members>Graph__c.StartDate__c</members>
         <members>Graph__c.VisualForce_Page__c</members>
+        <members>Graph__c.eventNameFilter__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -60,6 +61,7 @@
         <members>SalsalyticsLogo</members>
         <members>bootstrap</members>
         <members>bootstrapCustom</members>
+        <members>dynatree</members>
         <members>jQueryMobile</members>
         <name>StaticResource</name>
     </types>

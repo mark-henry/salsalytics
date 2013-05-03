@@ -12,7 +12,12 @@ global with sharing class SingleGraphController
         chartString += 'graphName="' + g.name + '"';
         
         // Get the slices of the pie graph
-        List<AggregateResult> slices = Database.query(g.Query__c);
+            String concat = g.Query2__c;
+            if (g.Query2__c == null) {
+                concat = '';
+            }
+            String concatQuery = g.Query__c + concat;
+            List<AggregateResult> slices = Database.query(concatQuery);
         
         // Iterate over the slices (label-count pairs)
         for (Integer i = 0; i < slices.size(); i++) {
@@ -30,7 +35,7 @@ global with sharing class SingleGraphController
     
     private Graph__c getGraph(String recordID)
     {
-        String query = 'SELECT Name,ChartType__c,EndDate__c,Query__c,' +
+        String query = 'SELECT Name,ChartType__c,EndDate__c,Query__c,Query2__c,' +
             'StartDate__c FROM Graph__c WHERE Id=\'' + recordID + '\'';
         return Database.query(query);
     }

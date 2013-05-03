@@ -8,11 +8,6 @@
             <apex:includeScript value="{!URLFOR($Resource.bootstrap, '/js/bootstrap.js')}"/>
             <apex:includeScript value="{!URLFOR($Resource.bootstrap, '/js/bootstrap.min.js')}"/>
         </head>
-    <script>
-        function redirect() {
-            window.location.href = "https://na9.salesforce.com/apex/salsalyticsdashboard";
-        }
-    </script>
     <div id="force">
         <div class="navbar navbar-inverse">
             <div class="navbar-inner">
@@ -37,10 +32,28 @@
             </div>
 
             <div class="control-group"> 
+                <label class="control-label" style="font-size: 12pt; text-align:left">For this app:</label>
+                <div class="controls">
+                    <apex:selectList id="appname" value="{!graph.AppName__c}" size="1" required="true">
+                    <apex:selectOptions value="{!apps}"/>
+                    </apex:selectList>
+                </div>
+            </div>
+
+            <div class="control-group"> 
                 <label class="control-label" style="font-size: 12pt; text-align:left">Graph this attribute:</label>
                 <div class="controls">
                     <apex:selectList id="attributes" value="{!graph.Attribute__c}" size="1" required="true">
                     <apex:selectOptions value="{!attributes}"/>
+                    </apex:selectList>
+                </div>
+            </div>
+            
+            <div class="control-group"> 
+                <label class="control-label" style="font-size: 12pt; text-align:left">Filter by Event Name:</label>
+                <div class="controls">
+                    <apex:selectList id="eventNameFilter" value="{!graph.eventNameFilter__c}" size="1" required="false">
+                    <apex:selectOptions value="{!eventNames}"/>
                     </apex:selectList>
                 </div>
             </div>
@@ -67,11 +80,11 @@
                 </div>
             </div>
           
-            <apex:commandButton styleClass="btn btn-primary" action="{!save}" oncomplete="redirect()"
+            <apex:commandButton styleClass="btn btn-primary" action="{!save}"
                               value="Save New Graph"/>
 
                               
-          <apex:commandButton styleClass="btn" oncomplete="redirect()"
+          <apex:commandButton styleClass="btn" action="{!cancel}"
                               value="Cancel"/>                             
                        
      </apex:pageBlock>
