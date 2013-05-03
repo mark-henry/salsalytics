@@ -9,17 +9,17 @@ global with sharing class DashboardController {
 
         
         // GET ATTRIBUTES SOQL
-        List<EventAttribute__c> attributes = [select key__c, value__c from eventAttribute__c where key__c = 'AppName'];
+        List<Event__c> apps = [select AppName__c from Event__c];
         
         //Gets only distinct App names
         appNames.add('all');
-        for(EventAttribute__c appName : attributes){
-            appNames.add(appName.value__c);    
+        for(Event__c app : apps){
+            appNames.add(app.appName__c);    
         }
         
         //Sets up the tabs for the each app
         for(String appName : appNames){
-            if(appName.equals('all')) {
+            if(appName == null || appName.equals('all')) {
                 tabChartString+= '<li><a href="#pane' + tabCount+ '" data-toggle="tab">Miscellaneous</a></li>';
             }
             else {

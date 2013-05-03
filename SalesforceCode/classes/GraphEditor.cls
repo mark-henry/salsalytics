@@ -132,18 +132,16 @@ global with sharing class GraphEditor
 
     public List<SelectOption> getApps()
     {
-      Set<SelectOption> options = new Set<SelectOption>();
-      List<SelectOption> listOptions = new List<SelectOption>();
-            
-      // GET ATTRIBUTES SOQL
-       List<EventAttribute__c> attributes = [select key__c, value__c from eventAttribute__c where key__c = 'AppName'];
-
-       options.add(new SelectOption('all', 'All Apps'));
-       for(EventAttribute__c attributeName : attributes)
-       {
-          options.add(new SelectOption(attributeName.value__c, attributeName.value__c));
-       }       
+       Set<SelectOption> options = new Set<SelectOption>();
+       List<Event__c> apps = [select AppName__c from Event__c];
+       List<SelectOption> listOptions = new List<SelectOption>(options);
        
+       for(Event__c app : apps)
+       {
+          if (app.AppName__c != null) 
+              options.add(new SelectOption(app.AppName__c, app.AppName__c));
+       }       
+       options.add(new SelectOption('all', 'All Apps'));
        for (SelectOption option : options) 
        {
            listOptions.add(option);
