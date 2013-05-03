@@ -1,25 +1,61 @@
 package Salsalytics;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.*;
+import android.preference.PreferenceManager;
 
 /**
- * <p>EventSender is the public interface for the Salsalytics wrapper. This
+ * <p>This is the public interface for the Salsalytics EventSender package. This
  * class is thread safe singleton that can be safely used from anywhere 
- * in the users Android application.  This class has two methods one to 
- * set the Server in which to transfur data too and one to send data. </p>
+ * in the users Android application.  This class has required methods: setUrl, which
+ * sets the url for the Google App Engine Server in which to transfer data too,
+ * and sendData, to trigger the send.  Salsalytics uses the Application Name, if you choose to 
+ * supply it, as a filter to separate the data into separate tabs in the 
+ * Salsalytics Dashboard.</p>
  * 
- * ***IMPORTANT*** In order to send data, the URL must be set.
+ * <p>Optionally, you may specify a Constant Data map.
+ * If you choose to do so all key-value pairs in the map you have submitted will be sent with 
+ * the new data collected on every event send.  This may be useful as it allows you to submit a 
+ * specific project build number or code name (e.g. "Build 128" or "Alpha") with every event so 
+ * the event can later be easily identified or filtered by it the Salsalytics Dashboard.</p>
+ * 
+ * <p>Device specific information is also collected for you by the Salsalytics EventSender.  Use
+ * the methods in EventSender's DeviceInfrormationColleced object to set whether or not 
+ * specific pieces of data about the device sent along with your events.  Android Version number
+ * (e.g. 4.2.2) is the only piece of information defaulted to always sent.</p>
+ * 
+ * <p>Within Salsalytics the Application Name, Constant Data Map and
+ * your decisions about which of the build-in device information
+ * fields persists through the application losing focus.</p>
+ * 
+ * 
+ * Important Notes 
+ * <li> In order to send data, the URL must be set. 
+ * <li> Key's may not begin with a dollar sign ($) character. 
+ * 
  * 
  * @author Brandon Page, brpage@calpoly.edu
  */
-public class EventSender {
+public class EventSender extends Activity {
         private static Event event;
         private static AsyncTaskSender ats;
-        private static String urlName, appName;
+        private static String urlName, appName = "";
         private static Map<String, String> constantMap;
+        private final String serverKey = "$serverUrlKey";
+        private final String appNameKey = "$appName";
+        private final String androidVersionKey = "$Android Version Number";
+        private final String androidVersionCodeNameKey = "$Android Version Codename";
+        private final String modelKey = "$Model";
+        private final String manufactureKey = "$Manufacture";
+        private final String deviceNameKey = "$Device Name";
+        private final String serviceProviderKey = "$Wireless Service Provider";
+        
+        // Public access to decide what device info is recorded
         public static DeviceInformation DeviceInformationCollected;
         
         private EventSender() {
@@ -57,6 +93,7 @@ public class EventSender {
         	ats.execute(event.getServer());
         }
         
+        
         /**
          *  <p>This method sets the App Name attribute of the even sender.</p>
          * 
@@ -81,12 +118,12 @@ public class EventSender {
         }
         
         private class DeviceInformation {
-        	private boolean androidVersionNumberCollected;
-        	private boolean androidVersionCodenameCollected;
-        	private boolean modelCollected;
-        	private boolean manufactureCollected;
-        	private boolean deviceNameCollected;
-        	private boolean wirelessServiceProviderCollected;
+        	boolean androidVersionNumberCollected;
+        	boolean androidVersionCodenameCollected;
+        	boolean modelCollected;
+        	boolean manufactureCollected;
+        	boolean deviceNameCollected;
+        	boolean wirelessServiceProviderCollected;
         	
         	private String androidVersionNumber;
         	private String androidVersionCodename;
@@ -117,7 +154,6 @@ public class EventSender {
 			/**
 			 * @param androidVersionNumberCollected the androidVersionNumberCollected to set
 			 */
-			@SuppressWarnings("unused")
 			public void setAndroidVersionNumberCollected(
 					boolean androidVersionNumberCollected) {
 				this.androidVersionNumberCollected = androidVersionNumberCollected;
@@ -126,7 +162,6 @@ public class EventSender {
 			/**
 			 * @param androidVersionCodenameCollected the androidVersionCodenameCollected to set
 			 */
-			@SuppressWarnings("unused")
 			public void setAndroidVersionCodenameCollected(
 					boolean androidVersionCodenameCollected) {
 				this.androidVersionCodenameCollected = androidVersionCodenameCollected;
@@ -135,7 +170,6 @@ public class EventSender {
 			/**
 			 * @param modelCollected the modelCollected to set
 			 */
-			@SuppressWarnings("unused")
 			public void setModelCollected(boolean modelCollected) {
 				this.modelCollected = modelCollected;
 			}
@@ -143,7 +177,6 @@ public class EventSender {
 			/**
 			 * @param manufactureCollected the manufactureCollected to set
 			 */
-			@SuppressWarnings("unused")
 			public void setManufactureCollected(boolean manufactureCollected) {
 				this.manufactureCollected = manufactureCollected;
 			}
@@ -151,7 +184,6 @@ public class EventSender {
 			/**
 			 * @param deviceNameCollected the deviceNameCollected to set
 			 */
-			@SuppressWarnings("unused")
 			public void setDeviceNameCollected(boolean deviceNameCollected) {
 				this.deviceNameCollected = deviceNameCollected;
 			}
@@ -169,19 +201,74 @@ public class EventSender {
 				Map<String, String>  selectedInfo = new TreeMap<String, String>();
 				
 				if(androidVersionNumberCollected)
-					selectedInfo.put("$Android Version Number", this.androidVersionNumber);
+					selectedInfo.put(androidVersionKey, this.androidVersionNumber);
             	if(androidVersionCodenameCollected)
-            		selectedInfo.put("$Android Version Codename", this.androidVersionCodename);
+            		selectedInfo.put(androidVersionCodeNameKey, this.androidVersionCodename);
             	if(modelCollected) 
-            		selectedInfo.put("$Model", this.model);
+            		selectedInfo.put(modelKey, this.model);
             	if(manufactureCollected)
-            		selectedInfo.put("$Manufacture", this.manufacture);
+            		selectedInfo.put(manufactureKey, this.manufacture);
             	if(deviceNameCollected)
-            		selectedInfo.put("$Device Name", this.deviceName);
+            		selectedInfo.put(deviceNameKey, this.deviceName);
             	if(wirelessServiceProviderCollected)
-            		selectedInfo.put("$Wireless Service Provider", this.wirelessServiceProvider);
+            		selectedInfo.put(serviceProviderKey, this.wirelessServiceProvider);
 				
 				return selectedInfo;
 			}
+        }
+        
+        @Override
+        protected void onPause() {
+        	super.onPause();
+        	
+        	Set<String> keySet = constantMap.keySet();
+        	SharedPreferences salsalyticsPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        	SharedPreferences.Editor editor = salsalyticsPrefs.edit();
+        	
+        	editor.clear();
+        	editor.putString(serverKey, urlName);
+        	editor.putString(appNameKey, appName);
+        	
+        	editor.putBoolean(androidVersionKey, DeviceInformationCollected.androidVersionNumberCollected);
+        	editor.putBoolean(androidVersionCodeNameKey, DeviceInformationCollected.androidVersionCodenameCollected);
+        	editor.putBoolean(modelKey, DeviceInformationCollected.modelCollected);
+        	editor.putBoolean(manufactureKey, DeviceInformationCollected.manufactureCollected);
+        	editor.putBoolean(deviceNameKey, DeviceInformationCollected.deviceNameCollected);
+        	editor.putBoolean(serviceProviderKey, DeviceInformationCollected.wirelessServiceProviderCollected);
+        	
+        	for(String key : keySet) {
+        		editor.putString(key, constantMap.get(key));
+        	}
+        	
+        	editor.commit();
+        }
+        
+		@SuppressWarnings("unchecked")
+		@Override
+        protected void onResume() {
+        	super.onResume();
+        	
+        	SharedPreferences salsalyticsPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());        	
+			Map<String, ?> allData = salsalyticsPrefs.getAll();
+        	
+        	urlName = (String) allData.get(serverKey);
+        	allData.remove(serverKey);
+        	appName = (String) allData.get(appNameKey);
+        	allData.remove(appNameKey);
+        	
+        	DeviceInformationCollected.setAndroidVersionNumberCollected((Boolean) allData.get(androidVersionKey));
+        	allData.remove(androidVersionKey);
+        	DeviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(androidVersionCodeNameKey));
+        	allData.remove(androidVersionCodeNameKey);
+        	DeviceInformationCollected.setDeviceNameCollected((Boolean) allData.get(deviceNameKey));
+        	allData.remove(deviceNameKey);
+        	DeviceInformationCollected.setManufactureCollected((Boolean) allData.get(manufactureKey));
+        	allData.remove(manufactureKey);
+        	DeviceInformationCollected.setModelCollected((Boolean) allData.get(modelKey));
+        	allData.remove(modelKey);
+        	DeviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(serviceProviderKey));
+        	allData.remove(serviceProviderKey);
+        	
+        	constantMap.putAll((Map<String, String>) allData);
         }
 }

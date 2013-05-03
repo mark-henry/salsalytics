@@ -91,12 +91,12 @@ class Event {
 			query += "&" + "AppName=" + this.appName;
 		
 		if(this.deviceInfo != null && !this.deviceInfo.isEmpty())
-			query += buildQueryString(this.deviceInfo);
+			query += buildQueryString(this.deviceInfo, false);
 		
 		if(this.constantData != null && !this.constantData.isEmpty()) 
-			query += buildQueryString(this.constantData);
+			query += buildQueryString(this.constantData, false);
 		
-		query += buildQueryString(attributes);
+		query += buildQueryString(attributes, true);
 	}
 
 	/**
@@ -106,12 +106,17 @@ class Event {
 	 * querystring.
 	 * @return The querystring with url encoded parameters.
 	 */
-	private String buildQueryString(Map<String, String> urlParams) {
+	private String buildQueryString(Map<String, String> urlParams, boolean checkForSecialChars) {
 		StringBuilder query = new StringBuilder();
+		boolean skipEntry = false;
 
 		for (Entry<String, String> urlParam : urlParams.entrySet()) {
-			query.append("&" + encode(urlParam.getKey()) + "="
+			
+			skipEntry = (checkForSecialChars && urlParam.getKey().startsWith("$"));
+			if(!skipEntry) {
+				query.append("&" + encode(urlParam.getKey()) + "="
 					+ encode(urlParam.getValue()));
+			}
 		}
 		return query.toString();
 	}
