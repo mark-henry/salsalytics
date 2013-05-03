@@ -84,6 +84,10 @@ public class EventSender extends Activity {
          * pair attributes associated with the Event.   
          */
         public static void sendData(String title, Map<String, String> attributes) {
+        	if(title != null) {
+        		title = "Unnamed Event";
+        	}
+        	
         	new EventSender();
         	event.addData(title, attributes);
         	ats.execute(event.getServer());

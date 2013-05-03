@@ -82,17 +82,17 @@ class Event {
 	 */
 	void addData(String title, Map<String, String> attributes) {
 		
-		query += title;
-		if(appName != null && !appName.equals(""))
-			query += "&" + "AppName=" + this.appName;
+			query += title;
+			if(appName != null && !appName.equals(""))
+				query += "&" + "AppName=" + this.appName;
 		
-		if(this.deviceInfo != null && !this.deviceInfo.isEmpty())
-			query += buildQueryString(this.deviceInfo, false);
+			if(this.deviceInfo != null && !this.deviceInfo.isEmpty())
+				query += buildQueryString(this.deviceInfo, false);
 		
-		if(this.constantData != null && !this.constantData.isEmpty()) 
-			query += buildQueryString(this.constantData, false);
+			if(this.constantData != null && !this.constantData.isEmpty()) 
+				query += buildQueryString(this.constantData, false);
 		
-		query += buildQueryString(attributes, true);
+			query += buildQueryString(attributes, true);
 	}
 
 	/**

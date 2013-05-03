@@ -18,7 +18,10 @@ public class EventTest extends TestCase {
 	Event bareEvent, bareEvent2;
 	String expectedURL = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	String expectedURL2 = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
-	
+	String emptyExpectedQuery = "?SalsalyticsEventTitle=Testing";
+	String bareExpectedQuery = "?SalsalyticsEventTitle=Testing&test1" +
+			"=hello&test2=world&test3=foo&test4=%26value" +
+			"&test5=%3A%2F%3F%23%26%3D";
 	public EventTest(String name) {
 		super(name);
 	}
@@ -38,11 +41,18 @@ public class EventTest extends TestCase {
 		assertEquals(expectedURL2, actualURL2);
 	}
 	
-	public void testAddData() {
+	public void testEmpty() {
+		bareEvent.addData("Testing", null);
+		assertEquals(emptyExpectedQuery, bareEvent.getQuery());
+	}
+	
+	/*public void testWithAppName() {
+		
+	}*/
+	
+	public void testBareAddData() {
 		Map<String, String> data = new TreeMap<String, String>();
-		String expectedQuery = "?SalsalyticsEventTitle=Testing&test1" +
-				"=hello&test2=world&test3=foo&test4=%26value" +
-				"&test5=%3A%2F%3F%23%26%3D";
+		
 		data.put("test1", "hello");
 		data.put("test2", "world");
 		data.put("test3", "foo");
@@ -51,8 +61,7 @@ public class EventTest extends TestCase {
 		
 		bareEvent.addData("Testing", data);
 		
-		assertEquals(expectedQuery, bareEvent.getQuery());
+		assertEquals(bareExpectedQuery, bareEvent.getQuery());
 	}
 	
-
 }
