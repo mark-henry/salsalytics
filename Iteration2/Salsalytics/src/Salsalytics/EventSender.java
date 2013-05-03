@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.*;
 import android.preference.PreferenceManager;
 
+import android.util.*;
+
 /**
  * <p>This is the public interface for the Salsalytics EventSender package. This
  * class is thread safe singleton that can be safely used from anywhere 
@@ -48,18 +50,18 @@ public class EventSender extends Activity {
         private static Map<String, String> constantMap = new TreeMap<String, String>();
         private final String serverKey = "$serverUrlKey";
         private final String appNameKey = "$appName";
-        private final String androidVersionKey = "$Android Version Number";
-        private final String androidVersionCodeNameKey = "$Android Version Codename";
-        private final String modelKey = "$Model";
-        private final String manufactureKey = "$Manufacture";
-        private final String deviceNameKey = "$Device Name";
-        private final String serviceProviderKey = "$Wireless Service Provider";
+        private final static String androidVersionKey = "$Android Version Number";
+        private final static String androidVersionCodeNameKey = "$Android Version Codename";
+        private final static String modelKey = "$Model";
+        private final static String manufactureKey = "$Manufacture";
+        private final static String deviceNameKey = "$Device Name";
+        private final static String serviceProviderKey = "$Wireless Service Provider";
         
         // Public access for client to decide what device info is reported
-        public DeviceInformation DeviceInformationCollected = new DeviceInformation();
+        public static DeviceInformation deviceInformationCollected = new DeviceInformation();
         
         private EventSender() {
-        	event = new Event(urlName, appName, constantMap, DeviceInformationCollected.getDeviceInfo());
+        	event = new Event(urlName, appName, constantMap, deviceInformationCollected.getDeviceInfo());
         	ats = new AsyncTaskSender(event);
         }
 
@@ -112,15 +114,19 @@ public class EventSender extends Activity {
         	constantMap = constantData;
         }
         
-        class DeviceInformation {
-        	private boolean androidVersionNumberCollected = false;
-        	private  boolean androidVersionCodenameCollected = false;
-        	private boolean modelCollected = false;
-        	private boolean manufactureCollected = false;
-        	private boolean deviceNameCollected = false;
-        	private boolean wirelessServiceProviderCollected = false;
+        public static DeviceInformation changeDeviceInformationCollected() {
+        	return deviceInformationCollected;
+        }
+        
+        public static class DeviceInformation {
+        	private boolean isAndroidVersionNumberCollected = false;
+        	private boolean isAndroidVersionCodenameCollected = false;
+        	private boolean isModelCollected = false;
+        	private boolean isManufactureCollected = false;
+        	private boolean isDeviceNameCollected = false;
+        	private boolean isWirelessServiceProviderCollected = false;
             	
-        	private String androidVersionNumber = Build.VERSION.INCREMENTAL;
+        	private String androidVersionNumber = Build.VERSION.RELEASE;
         	private String androidVersionCodename = Build.VERSION.CODENAME;
         	private String model = Build.MODEL;
         	private String manufacture = Build.MANUFACTURER;
@@ -132,7 +138,7 @@ public class EventSender extends Activity {
 			 */
 			public void setAndroidVersionNumberCollected(
 					boolean androidVersionNumberCollected) {
-				this.androidVersionNumberCollected = androidVersionNumberCollected;
+				this.isAndroidVersionNumberCollected = androidVersionNumberCollected;
 			}
 			
 			/**
@@ -140,53 +146,52 @@ public class EventSender extends Activity {
 			 */
 			public void setAndroidVersionCodenameCollected(
 					boolean androidVersionCodenameCollected) {
-				this.androidVersionCodenameCollected = androidVersionCodenameCollected;
+				this.isAndroidVersionCodenameCollected = androidVersionCodenameCollected;
 			}
 			
 			/**
 			 * @param modelCollected the modelCollected to set
 			 */
 			public void setModelCollected(boolean modelCollected) {
-				this.modelCollected = modelCollected;
+				this.isModelCollected = modelCollected;
 			}
 			
 			/**
 			 * @param manufactureCollected the manufactureCollected to set
 			 */
 			public void setManufactureCollected(boolean manufactureCollected) {
-				this.manufactureCollected = manufactureCollected;
+				this.isManufactureCollected = manufactureCollected;
 			}
 			
 			/**
 			 * @param deviceNameCollected the deviceNameCollected to set
 			 */
 			public void setDeviceNameCollected(boolean deviceNameCollected) {
-				this.deviceNameCollected = deviceNameCollected;
+				this.isDeviceNameCollected = deviceNameCollected;
 			}
 	
 			/**
 			 * @param wirelessServiceProviderCollected the wirelessServiceProviderCollected to set
 			 */
-			@SuppressWarnings("unused")
 			public void setWirelessServiceProviderCollected(
 					boolean wirelessServiceProviderCollected) {
-				this.wirelessServiceProviderCollected = wirelessServiceProviderCollected;
+				this.isWirelessServiceProviderCollected = wirelessServiceProviderCollected;
 			}
 		
 			protected TreeMap<String, String> getDeviceInfo() {
 				TreeMap<String, String>  selectedInfo = new TreeMap<String, String>();
 				
-				if(androidVersionNumberCollected)
+				if(isAndroidVersionNumberCollected)
 					selectedInfo.put(androidVersionKey, this.androidVersionNumber);
-            	if(androidVersionCodenameCollected)
+            	if(isAndroidVersionCodenameCollected)
             		selectedInfo.put(androidVersionCodeNameKey, this.androidVersionCodename);
-            	if(modelCollected) 
+            	if(isModelCollected) 
             		selectedInfo.put(modelKey, this.model);
-            	if(manufactureCollected)
+            	if(isManufactureCollected)
             		selectedInfo.put(manufactureKey, this.manufacture);
-            	if(deviceNameCollected)
+            	if(isDeviceNameCollected)
             		selectedInfo.put(deviceNameKey, this.deviceName);
-            	if(wirelessServiceProviderCollected)
+            	if(isWirelessServiceProviderCollected)
             		selectedInfo.put(serviceProviderKey, this.wirelessServiceProvider);
 				
 				return selectedInfo;
@@ -205,12 +210,12 @@ public class EventSender extends Activity {
         	editor.putString(serverKey, urlName);
         	editor.putString(appNameKey, appName);
         	
-        	editor.putBoolean(androidVersionKey, DeviceInformationCollected.androidVersionNumberCollected);
-        	editor.putBoolean(androidVersionCodeNameKey, DeviceInformationCollected.androidVersionCodenameCollected);
-        	editor.putBoolean(modelKey, DeviceInformationCollected.modelCollected);
-        	editor.putBoolean(manufactureKey, DeviceInformationCollected.manufactureCollected);
-        	editor.putBoolean(deviceNameKey, DeviceInformationCollected.deviceNameCollected);
-        	editor.putBoolean(serviceProviderKey, DeviceInformationCollected.wirelessServiceProviderCollected);
+        	editor.putBoolean(androidVersionKey, deviceInformationCollected.isAndroidVersionNumberCollected);
+        	editor.putBoolean(androidVersionCodeNameKey, deviceInformationCollected.isAndroidVersionCodenameCollected);
+        	editor.putBoolean(modelKey, deviceInformationCollected.isModelCollected);
+        	editor.putBoolean(manufactureKey, deviceInformationCollected.isManufactureCollected);
+        	editor.putBoolean(deviceNameKey, deviceInformationCollected.isDeviceNameCollected);
+        	editor.putBoolean(serviceProviderKey, deviceInformationCollected.isWirelessServiceProviderCollected);
         	
         	for(String key : keySet) {
         		editor.putString(key, constantMap.get(key));
@@ -232,17 +237,17 @@ public class EventSender extends Activity {
         	appName = (String) allData.get(appNameKey);
         	allData.remove(appNameKey);
         	
-        	DeviceInformationCollected.setAndroidVersionNumberCollected((Boolean) allData.get(androidVersionKey));
+        	deviceInformationCollected.setAndroidVersionNumberCollected((Boolean) allData.get(androidVersionKey));
         	allData.remove(androidVersionKey);
-        	DeviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(androidVersionCodeNameKey));
+        	deviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(androidVersionCodeNameKey));
         	allData.remove(androidVersionCodeNameKey);
-        	DeviceInformationCollected.setDeviceNameCollected((Boolean) allData.get(deviceNameKey));
+        	deviceInformationCollected.setDeviceNameCollected((Boolean) allData.get(deviceNameKey));
         	allData.remove(deviceNameKey);
-        	DeviceInformationCollected.setManufactureCollected((Boolean) allData.get(manufactureKey));
+        	deviceInformationCollected.setManufactureCollected((Boolean) allData.get(manufactureKey));
         	allData.remove(manufactureKey);
-        	DeviceInformationCollected.setModelCollected((Boolean) allData.get(modelKey));
+        	deviceInformationCollected.setModelCollected((Boolean) allData.get(modelKey));
         	allData.remove(modelKey);
-        	DeviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(serviceProviderKey));
+        	deviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(serviceProviderKey));
         	allData.remove(serviceProviderKey);
         	
         	constantMap.putAll((Map<String, String>) allData);

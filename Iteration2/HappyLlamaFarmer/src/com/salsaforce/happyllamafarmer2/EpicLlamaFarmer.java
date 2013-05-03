@@ -91,6 +91,36 @@ public class EpicLlamaFarmer extends Activity {
 					EventSender.setConstantData(null);
 			}
 		});
+		
+		nameSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+			
+				EventSender.changeDeviceInformationCollected().setDeviceNameCollected(isChecked);
+			}
+		});
+		
+		this.maufactureSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+			
+				EventSender.changeDeviceInformationCollected().setManufactureCollected(isChecked);
+			}
+		});
+		
+		this.carrierSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+			
+				EventSender.changeDeviceInformationCollected().setWirelessServiceProviderCollected(isChecked);
+			}
+		});
 	}	
 	
 
