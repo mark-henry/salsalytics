@@ -30,7 +30,7 @@ class Event {
 	private String url, appName;
 	private Map<String, String> constantData;
 	private Map<String, String> deviceInfo;
-	
+
 	Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
 		this.url = url;
 		this.appName = appName;

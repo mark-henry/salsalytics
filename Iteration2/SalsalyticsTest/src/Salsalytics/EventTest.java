@@ -11,11 +11,13 @@ import junit.framework.TestCase;
 /**  
  * A unit test for the Event class.
  * 
- * @author Martin Silverio, msilverio324@gmail.com
+ * @author Brandon Page brpage@calpoly.edu
  */
 public class EventTest extends TestCase {
 
-	Event event;
+	Event bareEvent, bareEvent2;
+	String expectedURL = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
+	String expectedURL2 = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	
 	public EventTest(String name) {
 		super(name);
@@ -23,22 +25,17 @@ public class EventTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		event = new Event();
+		bareEvent = new Event(expectedURL, null, null, null);
+		bareEvent2 = new Event(expectedURL2, null, null, null);
 	}
 	
-	public void testSetAndGetServer() {
-		String expectedURL = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
-		String expectedURL2 = "http://www.giantbomb.com";
+	public void testGetServer() {
 		
-		event.setServer(expectedURL);
-		String actualURL = event.getServer().toString();
+		String actualURL = bareEvent.getServer().toString();
 		assertEquals(expectedURL, actualURL);
 		
-    	event.setServer(expectedURL2);
-		String actualURL2 = event.getServer().toString();
+		String actualURL2 = bareEvent2.getServer().toString();
 		assertEquals(expectedURL2, actualURL2);
-		
-		
 	}
 	
 	public void testAddData() {
@@ -52,9 +49,9 @@ public class EventTest extends TestCase {
 		data.put("test4", "&value");
 		data.put("test5", ":/?#&=");
 		
-		event.addData("Testing", data);
+		bareEvent.addData("Testing", data);
 		
-		assertEquals(expectedQuery, event.getQuery());
+		assertEquals(expectedQuery, bareEvent.getQuery());
 	}
 	
 
