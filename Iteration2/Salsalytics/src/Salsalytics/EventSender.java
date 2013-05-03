@@ -44,8 +44,8 @@ import android.preference.PreferenceManager;
 public class EventSender extends Activity {
         private static Event event;
         private static AsyncTaskSender ats;
-        private static String urlName, appName = "";
-        private static Map<String, String> constantMap;
+        private static String urlName, appName;
+        private static Map<String, String> constantMap = new TreeMap<String, String>();
         private final String serverKey = "$serverUrlKey";
         private final String appNameKey = "$appName";
         private final String androidVersionKey = "$Android Version Number";
@@ -55,16 +55,12 @@ public class EventSender extends Activity {
         private final String deviceNameKey = "$Device Name";
         private final String serviceProviderKey = "$Wireless Service Provider";
         
-        // Public access to decide what device info is recorded
-        public static DeviceInformation DeviceInformationCollected;
+        // Public access for client to decide what device info is reported
+        public DeviceInformation DeviceInformationCollected = new DeviceInformation();
         
         private EventSender() {
         	event = new Event(urlName, appName, constantMap, DeviceInformationCollected.getDeviceInfo());
         	ats = new AsyncTaskSender(event);
-        }
-
-        private static EventSender getInstance() {
-        	return new EventSender();
         }
 
         /**
@@ -74,7 +70,6 @@ public class EventSender extends Activity {
          * @param URL a String representing the URL
          */
         public static void setURL(String URL) {
-        	getInstance();
         	urlName = URL;
         }
 
@@ -88,7 +83,7 @@ public class EventSender extends Activity {
          * pair attributes associated with the Event.   
          */
         public static void sendData(String title, Map<String, String> attributes) {
-        	getInstance();
+        	new EventSender();
         	event.addData(title, attributes);
         	ats.execute(event.getServer());
         }
@@ -113,43 +108,24 @@ public class EventSender extends Activity {
          * @param constantData a Map<String, String> of key value-pair attributes to be
          * sent with each event.
          */
-        public static void addConstantData(Map<String, String> constantData) {
+        public static void setConstantData(Map<String, String> constantData) {
         	constantMap = constantData;
         }
         
-        private class DeviceInformation {
-        	boolean androidVersionNumberCollected;
-        	boolean androidVersionCodenameCollected;
-        	boolean modelCollected;
-        	boolean manufactureCollected;
-        	boolean deviceNameCollected;
-        	boolean wirelessServiceProviderCollected;
-        	
-        	private String androidVersionNumber;
-        	private String androidVersionCodename;
-        	private String model;
-        	private String manufacture;
-        	private String deviceName;
-        	private String wirelessServiceProvider;
-        	
-        	
-        	private DeviceInformation() {
-        		androidVersionNumberCollected = true;
-            	androidVersionCodenameCollected = false;
-            	modelCollected = false;
-            	manufactureCollected = false;
-            	deviceNameCollected = false;
-            	wirelessServiceProviderCollected = false;
+        class DeviceInformation {
+        	private boolean androidVersionNumberCollected = false;
+        	private  boolean androidVersionCodenameCollected = false;
+        	private boolean modelCollected = false;
+        	private boolean manufactureCollected = false;
+        	private boolean deviceNameCollected = false;
+        	private boolean wirelessServiceProviderCollected = false;
             	
-        		androidVersionNumber = Build.VERSION.INCREMENTAL;
-        		androidVersionCodename = Build.VERSION.CODENAME;
-        		model = Build.MODEL;
-        		manufacture = Build.MANUFACTURER;
-        		deviceName = Build.DEVICE;
-        		wirelessServiceProvider = Build.BRAND;
-        	}
-        	
-        	
+        	private String androidVersionNumber = Build.VERSION.INCREMENTAL;
+        	private String androidVersionCodename = Build.VERSION.CODENAME;
+        	private String model = Build.MODEL;
+        	private String manufacture = Build.MANUFACTURER;
+        	private String deviceName = Build.DEVICE;
+        	private String wirelessServiceProvider = Build.BRAND;
         	
 			/**
 			 * @param androidVersionNumberCollected the androidVersionNumberCollected to set
@@ -197,8 +173,8 @@ public class EventSender extends Activity {
 				this.wirelessServiceProviderCollected = wirelessServiceProviderCollected;
 			}
 		
-			private Map<String, String> getDeviceInfo() {
-				Map<String, String>  selectedInfo = new TreeMap<String, String>();
+			protected TreeMap<String, String> getDeviceInfo() {
+				TreeMap<String, String>  selectedInfo = new TreeMap<String, String>();
 				
 				if(androidVersionNumberCollected)
 					selectedInfo.put(androidVersionKey, this.androidVersionNumber);
@@ -217,7 +193,7 @@ public class EventSender extends Activity {
 			}
         }
         
-        @Override
+       @Override
         protected void onPause() {
         	super.onPause();
         	
