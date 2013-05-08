@@ -5,29 +5,29 @@ global with sharing class DashboardController {
      public String getTabsForApps() {
         tabChartString = '<ul class="nav nav-tabs"><li class="nav-header">Applications</li><li></li>';
         Integer tabCount = 1;
-        Set<String> appNames =  new Set<String>();
-
+        Set<String> appSet =  new Set<String>();
+        List<String> appNames = new List<String>();
         
         // GET ATTRIBUTES SOQL
         List<Event__c> apps = [select AppName__c from Event__c];
         
         //Gets only distinct App names
-        appNames.add('all');
+        appSet.add('all');
         for(Event__c app : apps){
-            appNames.add(app.appName__c);    
+            if (app.appName__c != null)
+                appSet.add(app.appName__c);    
         }
-        
+        appNames.addAll(appSet);
+        appNames.sort();
         //Sets up the tabs for the each app
         for(String appName : appNames){
-            if(appName == null || appName.equals('all')) {
+            if(appName.equals('all')) {
                 tabChartString+= '<li><a href="#pane' + tabCount+ '" data-toggle="tab">Miscellaneous</a></li>';
             }
             else {
                 tabChartString+= '<li><a href="#pane' + tabCount+ '" data-toggle="tab">' + appName + '</a></li>';
             }
             tabCount++;     
-    
-
         }
         tabChartString+='</ul><div class="tab-content" style="background:#E6E6E6">';
         

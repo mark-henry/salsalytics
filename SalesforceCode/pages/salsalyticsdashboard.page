@@ -52,7 +52,8 @@
             
             var options = {'title':graphName,
                        'width':400,
-                       'height':300
+                       'height':250,
+                       'backgroundColor':'#E6E6E6'
                        };
             // Instantiate and draw our chart, passing in some options.
             if (chartType == "pie") 

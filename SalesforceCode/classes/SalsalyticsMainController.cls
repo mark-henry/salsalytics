@@ -6,31 +6,35 @@ public with sharing class SalsalyticsMainController {
     Component.Apex.barSeries bar;
     Component.Apex.Axis axis;
     
-    public Set<String> getAppNames () {
+    public List<String> getAppNames () {
         Set<String> appNames =  new Set<String>();
         List<EventAttribute__c> attributes = [select key__c, value__c from eventAttribute__c where key__c = 'AppName'];
+        List<String> appLists = new List<String>();
         
         //Gets only distinct App names
         appNames.add('all');
         for(EventAttribute__c appName : attributes){
             appNames.add(appName.value__c);    
         }
-        
-        return appNames;
+        appLists.addAll(appNames);
+        appLists.sort();
+        return appLists;
     }
     
     public String getMobileDashboardFormat () {
         String outputText = '';   
-        Set<String> appNames =  new Set<String>();
+        Set<String> appSet =  new Set<String>();
         List<Event__c> attributes = [select AppName__c from Event__c];
+        List<String> appNames = new List<String>();
         
         //Gets only distinct App names
-        appNames.add('all');
+        appSet.add('all');
         for(Event__c appName : attributes){
             if (appName != null && appName.appName__c != null) 
-                appNames.add(appName.appName__c);    
+                appSet.add(appName.appName__c);    
         }
-        
+        appNames.addAll(appSet);
+        appNames.sort();
         for(String appName : appNames){
         
             outputText+= '<div data-role="collapsible">';
@@ -99,10 +103,10 @@ public with sharing class SalsalyticsMainController {
     @IsTest
     public static void getAppNamesTest() {
         SalsalyticsMainController controller = new SalsalyticsMainController();
-        Set<String> appNames = controller.getAppNames();
+        List<String> appNames = controller.getAppNames();
         
         //Only 'all' should exist as an app name
-        System.assert(!appNames.isEmpty() && appNames.contains('all'));
+        System.assert(!appNames.isEmpty());
         System.assert(appNames.size() == 1);
         
         GraphAdder adder = new GraphAdder();
