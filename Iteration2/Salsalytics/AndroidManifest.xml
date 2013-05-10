@@ -7,6 +7,10 @@
         android:minSdkVersion="9"
         android:targetSdkVersion="15" />
 
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.salsaforce.salsalytics" />
+    
     <application>
         <activity
             android:name="com.salsaforce.sampleapp.MainActivity" >
@@ -16,6 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <uses-library android:name="android.test.runner" />
     </application>
 
 </manifest>

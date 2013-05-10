@@ -3,8 +3,9 @@ import java.util.TreeMap;
 
 import com.salsaforce.happyllamafarmer2.R;
 
-import Salsalytics.EventSender;
+import salsalytics.EventSender;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -130,6 +131,9 @@ public class EpicLlamaFarmer extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	
+	public static Context getContext() {
+		return getContext();
+	}
 }
 

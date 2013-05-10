@@ -1,4 +1,4 @@
-package Salsalytics;
+package salsalytics;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Event represents a Salesforce Event Object, which live in a 
@@ -24,18 +25,23 @@ import android.util.Log;
  * @author Brandon Page, brpage@calpoly.edu
  * @author Martin Silverio, msilverio324@gmail.com
  */
-class Event {
+public class Event {
 	private String charset = "UTF-8";
 	private String query = "?SalsalyticsEventTitle=";
 	private String url, appName;
 	private Map<String, String> constantData;
 	private Map<String, String> deviceInfo;
 	
-	Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
+	protected Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
 		this.url = url;
 		this.appName = appName;
 		this.constantData = constantData;
 		this.deviceInfo = deviceInformation;
+		
+		Log.d("Query", "before: " + appName);
+		if(appName == null || appName.equals(""))
+			appName = "all";
+		Log.d("Query", "after: " + appName);
 	}
 	
 	/**
@@ -60,7 +66,7 @@ class Event {
 	 * 
 	 * @return the URL of the server
 	 */
-	URL getServer() {
+	public URL getServer() {
 		URL realUrl;
 		try {
 			realUrl = new URL(url);
@@ -80,11 +86,10 @@ class Event {
 	 * @param attributes a Map containing the key-value pairs 
 	 * relating to the event.
 	 */
-	void addData(String title, Map<String, String> attributes) {
+	protected void addData(String title, Map<String, String> attributes) {
 		
 			query += title;
-			if(appName != null && !appName.equals(""))
-				query += "&" + "AppName=" + this.appName;
+			query += "&" + "AppName=" + this.appName;
 		
 			if(this.deviceInfo != null && !this.deviceInfo.isEmpty())
 				query += buildQueryString(this.deviceInfo, false);
@@ -123,7 +128,7 @@ class Event {
 	 * @param urlParam A parameter to encode.
 	 * @return The encoded parameter or an empty string on error.
 	 */
-	public String encode(String urlParam) {
+	private String encode(String urlParam) {
 		String charset = "UTF-8";
 		try {
 			return URLEncoder.encode(urlParam, charset);
@@ -138,7 +143,8 @@ class Event {
 	 * 
 	 * @return the queryString currently built
 	 */
-	String getQuery() {
+	public String getQuery() {
+		Log.i("query", query);
 		return query;
 	}
 }

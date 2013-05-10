@@ -1,4 +1,4 @@
-package Salsalytics;
+package salsalytics;
 
 import java.util.Map;
 import java.util.Set;

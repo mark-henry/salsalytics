@@ -1,12 +1,12 @@
-package Salsalytics;
+package salsalytics;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import android.util.Log;
 import junit.framework.TestCase;
-
 
 /**  
  * A unit test for the Event class.
@@ -15,11 +15,11 @@ import junit.framework.TestCase;
  */
 public class EventTest extends TestCase {
 
-	Event bareEvent, bareEvent2;
+	Event bareEvent, bareEvent2, eventWithAppName;
 	String expectedURL = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	String expectedURL2 = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
-	String emptyExpectedQuery = "?SalsalyticsEventTitle=Testing";
-	String bareExpectedQuery = "?SalsalyticsEventTitle=Testing&test1" +
+	String emptyExpectedQuery = "?SalsalyticsEventTitle=Testing&appName=all";
+	String bareExpectedQuery = "?SalsalyticsEventTitle=Testing&appName=all&test1" +
 			"=hello&test2=world&test3=foo&test4=%26value" +
 			"&test5=%3A%2F%3F%23%26%3D";
 	public EventTest(String name) {
@@ -28,11 +28,11 @@ public class EventTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		bareEvent = new Event(expectedURL, null, null, null);
-		bareEvent2 = new Event(expectedURL2, null, null, null);
 	}
 	
 	public void testGetServer() {
+		bareEvent = new Event(expectedURL, null, null, null);
+		bareEvent2 = new Event(expectedURL2, null, null, null);
 		
 		String actualURL = bareEvent.getServer().toString();
 		assertEquals(expectedURL, actualURL);
@@ -42,13 +42,23 @@ public class EventTest extends TestCase {
 	}
 	
 	public void testEmpty() {
+		bareEvent = new Event(expectedURL, null, null, null);
+		
 		bareEvent.addData("Testing", null);
 		assertEquals(emptyExpectedQuery, bareEvent.getQuery());
 	}
 	
-	/*public void testWithAppName() {
-		
-	}*/
+	public void testWithAppName() {
+		bareEvent = new Event(expectedURL, "Test App", null, null);
+		bareEvent.addData("EventWithAppName", new TreeMap());
+		//TODO
+	}
+	
+	public void testWithNullEventName() {
+		bareEvent = new Event(expectedURL, "Test App", null, null);
+		bareEvent.addData(null, new TreeMap());
+		//TODO
+	}
 	
 	public void testBareAddData() {
 		Map<String, String> data = new TreeMap<String, String>();
@@ -60,7 +70,8 @@ public class EventTest extends TestCase {
 		data.put("test5", ":/?#&=");
 		
 		bareEvent.addData("Testing", data);
-		
+		Log.d("durp", "bare: " + this.bareExpectedQuery);
+		Log.d("durp", "query: " +this.bareEvent.getQuery());
 		assertEquals(bareExpectedQuery, bareEvent.getQuery());
 	}
 	
