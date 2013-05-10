@@ -26,6 +26,7 @@
     <web-resource-collection>
         <web-resource-name>SendToSalesforce</web-resource-name>
         <url-pattern>/SendToSalesforce</url-pattern>
+        <url-pattern>/Config.html</url-pattern>
     </web-resource-collection>
     <auth-constraint>
         <role-name>admin</role-name>

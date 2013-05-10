@@ -55,6 +55,7 @@ public class SendToSalesforce implements Getable {
 	 * @param resp The response to the get on this page (for debugging).
 	 */
 	private void processEvents(HttpServletResponse resp) throws IOException {
+		boolean error = false;
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		
 		//Gets all the Events from the database.
@@ -65,14 +66,18 @@ public class SendToSalesforce implements Getable {
 	    
 	    for (List<Entity> events : listsOfEvents) {
 	    	String json = eventsToJSON(events);
-	    	sendEvents(json, resp);
+	    	if(sendEvents(json, resp) > 0) {
+	    		error = true;
+	    	}
 	    }
 
-		List<Key> keysToDelete = new ArrayList<Key>();
-		for (Entity e : results) {
-			keysToDelete.add(e.getKey());
-		}
-		datastore.delete(keysToDelete);
+	    if (!error) {
+	    	List<Key> keysToDelete = new ArrayList<Key>();
+			for (Entity e : results) {
+				keysToDelete.add(e.getKey());
+			}
+			datastore.delete(keysToDelete);
+	    }
 	}
 	
 	/**
@@ -104,10 +109,12 @@ public class SendToSalesforce implements Getable {
 	 * @param resp The response to the get on this page (for debugging).
 	 * @throws IOException When println fails.
 	 */
-	private void sendEvents(String json, HttpServletResponse resp) throws IOException {
+	private int sendEvents(String json, HttpServletResponse resp) throws IOException {
 		resp.getWriter().println("Sent Events: " + json);
-		resp.getWriter().println("Salesforce Response: "
-		    + auth.createObject("/services/apexrest/salsaforce/EventAdder/", "{\"events\":" + json + "}", "application/json"));
+		String sResp = auth.createObject("/services/apexrest/salsaforce/EventAdder/",
+				"{\"events\":" + json + "}", "application/json");
+		resp.getWriter().println("Salesforce Response: " + sResp);
+		return sResp.length();
 	}
 	
 	/**
