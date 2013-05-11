@@ -120,7 +120,8 @@ public class EventTest extends TestCase {
 	/**
 	 * This test will ONLY work on the Sprint HTC One (my current 
 	 * favorite test device) because the query constructed is 
-	 * device dependent.  
+	 * device dependent.  When run with other devices the test will
+	 * not actually assert anything. 
 	 * 
 	 */
 	public void testDeviceInfo() {
@@ -138,5 +139,7 @@ public class EventTest extends TestCase {
 			testEvent.addData(null, null);
 			assertEquals(devInfoQuery, testEvent.getQuery());
 		}
+		
+		//TODO add more devices
 	}
 }

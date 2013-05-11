@@ -10,9 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Event represents a Salesforce Event Object, which live in a 
@@ -92,7 +90,6 @@ class Event {
 		query += title;
 		query += "&" + "AppName=" + appName;
 		
-		Log.i("queryIncomplete", query);
 		if(this.deviceInfo != null && !this.deviceInfo.isEmpty())
 			query += buildQueryString(this.deviceInfo, false);
 		
