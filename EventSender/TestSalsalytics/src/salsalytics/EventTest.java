@@ -15,46 +15,54 @@ import junit.framework.TestCase;
  */
 public class EventTest extends TestCase {
 
-	Event bareEvent, bareEvent2, eventWithAppName;
+	Event testEvent, testEvent2, eventWithAppName;
+	
 	String expectedURL = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	String expectedURL2 = "http://freshsalsaforce.appspot.com/freshsalsatothemax";
 	String emptyExpectedQuery = "?SalsalyticsEventTitle=Testing&AppName=all";
 	String bareExpectedQuery = "?SalsalyticsEventTitle=Testing&AppName=all&test1" +
 			"=hello&test2=world&test3=foo&test4=%26value" +
 			"&test5=%3A%2F%3F%23%26%3D";
+	String appNameQuery = "?SalsalyticsEventTitle=EventWithAppName&AppName=Test App";
+	String nullEventName = "?SalsalyticsEventTitle=Unnamed Event&AppName=Test App&a=test+key&oneMore=testKey-Value";
+
 	public EventTest(String name) {
 		super(name);
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		bareEvent = new Event(expectedURL, null, null, null);
-		bareEvent2 = new Event(expectedURL2, null, null, null);
+		testEvent = new Event(expectedURL, null, null, null);
+		testEvent2 = new Event(expectedURL2, null, null, null);
 	}
 	
 	public void testGetServer() {
-		String actualURL = bareEvent.getServer().toString();
+		String actualURL = testEvent.getServer().toString();
 		assertEquals(expectedURL, actualURL);
 		
-		String actualURL2 = bareEvent2.getServer().toString();
+		String actualURL2 = testEvent2.getServer().toString();
 		assertEquals(expectedURL2, actualURL2);
 	}
 	
 	public void testEmpty() {
-		bareEvent.addData("Testing", null);
-		assertEquals(emptyExpectedQuery, bareEvent.getQuery());
+		testEvent.addData("Testing", null);
+		assertEquals(emptyExpectedQuery, testEvent.getQuery());
 	}
 	
 	public void testWithAppName() {
-		bareEvent = new Event(expectedURL, "Test App", null, null);
-		bareEvent.addData("EventWithAppName", new TreeMap());
-		//TODO
+		testEvent = new Event(expectedURL, "Test App", null, null);
+		testEvent.addData("EventWithAppName", new TreeMap<String, String>());
+		assertEquals(appNameQuery, testEvent.getQuery());
 	}
 	
 	public void testWithNullEventName() {
-		bareEvent = new Event(expectedURL, "Test App", null, null);
-		bareEvent.addData(null, new TreeMap());
-		//TODO
+		testEvent = new Event(expectedURL, "Test App", null, null);
+		TreeMap<String, String> testArgs = new TreeMap<String, String>();
+		testArgs.put("a", "test key");
+		testArgs.put("oneMore", "testKey-Value");
+		
+		testEvent.addData(null, testArgs);
+		assertEquals(nullEventName, testEvent.getQuery());
 	}
 	
 	public void testBareAddData() {
@@ -66,8 +74,8 @@ public class EventTest extends TestCase {
 		data.put("test4", "&value");
 		data.put("test5", ":/?#&=");
 		
-		bareEvent.addData("Testing", data);
-		assertEquals(bareExpectedQuery, bareEvent.getQuery());
+		testEvent.addData("Testing", data);
+		assertEquals(bareExpectedQuery, testEvent.getQuery());
 	}
 	
 }

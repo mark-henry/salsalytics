@@ -25,14 +25,14 @@ import android.widget.Toast;
  * @author Brandon Page, brpage@calpoly.edu
  * @author Martin Silverio, msilverio324@gmail.com
  */
-public class Event {
+class Event {
 	private String charset = "UTF-8";
 	private String query = "?SalsalyticsEventTitle=";
 	private String url, appName;
 	private Map<String, String> constantData;
 	private Map<String, String> deviceInfo;
 	
-	protected Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
+	Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
 		this.url = url;
 		this.appName = appName;
 		this.constantData = constantData;
@@ -61,7 +61,7 @@ public class Event {
 	 * 
 	 * @return the URL of the server
 	 */
-	public URL getServer() {
+	URL getServer() {
 		URL realUrl;
 		try {
 			realUrl = new URL(url);
@@ -81,7 +81,7 @@ public class Event {
 	 * @param attributes a Map containing the key-value pairs 
 	 * relating to the event.
 	 */
-	protected void addData(String title, Map<String, String> attributes) {
+	void addData(String title, Map<String, String> attributes) {
 		
 		if(title == null || title.equals("")) {
     		title = "Unnamed Event";
@@ -147,7 +147,7 @@ public class Event {
 	 * 
 	 * @return the queryString currently built
 	 */
-	public String getQuery() {
+	String getQuery() {
 		return query;
 	}
 }
