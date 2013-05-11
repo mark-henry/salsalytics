@@ -83,9 +83,8 @@ class Event {
 	 */
 	void addData(String title, Map<String, String> attributes) {
 		
-		if(title == null || title.equals("")) {
+		if(title == null || title.equals("")) 
     		title = "Unnamed Event";
-    	}
 		
 		if(appName == null || appName.equals(""))
 			appName = "all";
