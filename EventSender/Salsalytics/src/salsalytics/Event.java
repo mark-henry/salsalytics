@@ -10,6 +10,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 /**
@@ -29,6 +33,7 @@ class Event {
 	private String url, appName;
 	private Map<String, String> constantData;
 	private Map<String, String> deviceInfo;
+	private Context hostContext;
 	
 	Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
 		this.url = url;

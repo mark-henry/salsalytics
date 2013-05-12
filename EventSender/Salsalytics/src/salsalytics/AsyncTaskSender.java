@@ -3,6 +3,10 @@ package salsalytics;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,7 +20,7 @@ class AsyncTaskSender extends AsyncTask<URL, Integer, Long> {
         private Event event;
 
         AsyncTaskSender(Event event) {
-                this.event = event;
+        	this.event = event;
         }
 
         /**
@@ -35,7 +39,7 @@ class AsyncTaskSender extends AsyncTask<URL, Integer, Long> {
                 Long status = null;
                 try {
                         status = Long.valueOf(event.send());
-                        Log.i("web request return status", "" + status);
+                        Log.i("Salsalytics", "Web request return status: " + status);
 
                         return status;
                 } catch (MalformedURLException e) {
@@ -44,7 +48,7 @@ class AsyncTaskSender extends AsyncTask<URL, Integer, Long> {
                         Log.e("IOException", e.getMessage());
                 }
                 
-                Log.e("Salsalytics Error", "Failure to send data, error code: " + 
+                Log.e("Salsalytics", " Error: Failure to send data, error code: " + 
                  status);
                 
                 return null;

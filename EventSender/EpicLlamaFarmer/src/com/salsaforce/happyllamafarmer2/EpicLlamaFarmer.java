@@ -68,7 +68,7 @@ public class EpicLlamaFarmer extends Activity {
 				if(!sKey3.equals("") && !sValue3.equals(""))
 					attributesMap.put(sKey3, sValue3);
 				
-				EventSender.sendData("EpicDemo", attributesMap);
+				EventSender.sendData(getBaseContext(), "EpicDemo", attributesMap);
 			}
 		});
 		
@@ -130,10 +130,6 @@ public class EpicLlamaFarmer extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-	}
-	
-	public static Context getContext() {
-		return getContext();
 	}
 }
 

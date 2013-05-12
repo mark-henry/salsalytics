@@ -5,9 +5,13 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.*;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 
 /**
@@ -40,6 +44,11 @@ import android.preference.PreferenceManager;
  * <li> Key's may not begin with a dollar sign ($) character. 
  * 
  * 
+ * Salsalytics uses the following permissions:
+ * <li> android.permission.INTERNET
+ * <li> android.permission.ACCESS_NETWORK_STATE
+ * 
+ * 
  * @author Brandon Page, brpage@calpoly.edu
  */
 public class EventSender extends Activity {
@@ -55,6 +64,7 @@ public class EventSender extends Activity {
         private final static String manufactureKey = "$Manufacture";
         private final static String deviceNameKey = "$Device Name";
         private final static String serviceProviderKey = "$Wireless Service Provider";
+        private static Context hostContext;
         
         // Public access for client to decide what device info is reported
         public static DeviceInformation deviceInformationCollected = new DeviceInformation();
@@ -77,23 +87,54 @@ public class EventSender extends Activity {
         /**
          * <p>This method sends and Event to the server.</p>
          * 
-         * ***REMEMBER*** In order to send data, the URL and App name must be set.
+         * ***REMEMBER*** In order to send data, a valid App Engine project
+         *  URL must be set.
          * 
          * @param title a String representing the Title of the Event.
          * @param attributes a Map<String, String> containing the key-value 
          * pair attributes associated with the Event.   
          */
-        public static void sendData(String title, Map<String, String> attributes) {
+        public static void sendData(Context someHostContext, String title, 
+         Map<String, String> attributes) {
+        	EventSender.hostContext = someHostContext;
         	new EventSender();
         	event.addData(title, attributes);
-        	ats.execute(event.getServer());
+        	
+        	if(internetAvalible())
+        		ats.execute(event.getServer());
+        	else {
+        		Log.i("Salsalytics",
+        	     "Unable to send Event, no internet connection.");
+        	
+        		//TODO Backup Event and send later.
+        	}
         }
         
+        /**
+         * Checks for an active Internet connection.  (Not if a connection is 
+         * Available).  This can be 2/3/4G or WiFi.     
+         * 
+         * @return true if an active Internet connection exits.
+         */
+        private static boolean internetAvalible() {
+        	ConnectivityManager connectManager = 
+        	 (ConnectivityManager) hostContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        	NetworkInfo netInfo = null;
+           
+        	if(connectManager != null)
+        		netInfo = connectManager.getActiveNetworkInfo();
+        	
+        	return netInfo != null && netInfo.isConnected();
+        }
         
         /**
          *  <p>This method sets the App Name attribute of the even sender.</p>
          * 
-         * @param appName the name of the app that the even sender is logging data for.
+         * @param appName the name of the app that the even sender is logging 
+         * data for.  Be warned the app name "all" is reserved; any Events 
+         * logged with that application name or with no application name 
+         * will end up in the "Miscellaneous" section of the Salsalytics
+         * Dashboard.    
          */
         public static void setAppName(String applicationName) {
         	if(applicationName != null && !applicationName.equals(""))
@@ -113,10 +154,21 @@ public class EventSender extends Activity {
         	constantMap = constantData;
         }
         
+        /**
+         * This method gives access to a Salsalytics DeviceInformation Object.   
+         * 
+         * @return a DeviceInformation object.
+         */
         public static DeviceInformation changeDeviceInformationCollected() {
         	return deviceInformationCollected;
         }
         
+        /**
+         * This object represents the device specific information you want collected with
+         * each Event sent.
+         * 
+         * @author Brandon Page (brpage@calpoly.edu)
+         */
         public static class DeviceInformation {
         	private boolean isAndroidVersionNumberCollected = false;
         	private boolean isAndroidVersionCodenameCollected = false;
@@ -177,6 +229,11 @@ public class EventSender extends Activity {
 				this.isWirelessServiceProviderCollected = wirelessServiceProviderCollected;
 			}
 		
+			/**
+			 * This method is for internal and testing use only.  
+			 * 
+			 * @return a map of the device info collected
+			 */
 			protected TreeMap<String, String> getDeviceInfo() {
 				TreeMap<String, String>  selectedInfo = new TreeMap<String, String>();
 				
@@ -197,6 +254,11 @@ public class EventSender extends Activity {
 			}
         }
         
+        /**
+         * This method backs up data (user choices and submissions) when the 
+         * host application loses focus.
+         * 
+         */
        @Override
         protected void onPause() {
         	super.onPause();
@@ -223,6 +285,11 @@ public class EventSender extends Activity {
         	editor.commit();
         }
         
+       /**
+        * This method restores data (user choices and submissions) when the 
+        * host application loses focus.
+        * 
+        */
 		@SuppressWarnings("unchecked")
 		@Override
         protected void onResume() {
