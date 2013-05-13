@@ -10,10 +10,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 /**
@@ -33,13 +29,22 @@ class Event {
 	private String url, appName;
 	private Map<String, String> constantData;
 	private Map<String, String> deviceInfo;
-	private Context hostContext;
 	
-	Event(String url, String appName, Map<String, String> constantData, Map<String, String> deviceInformation) {
+	Event(String url, String appName, Map<String, String> constantData, 
+	 Map<String, String> deviceInformation) {
 		this.url = url;
 		this.appName = appName;
 		this.constantData = constantData;
 		this.deviceInfo = deviceInformation;
+	}
+	
+	/**
+	 * Secondary constructor for ease of sending failed queries later
+	 * 
+	 * @param query
+	 */
+	Event(String query) {
+		this.query = query;
 	}
 	
 	/**
@@ -112,13 +117,15 @@ class Event {
 	 * querystring.
 	 * @return The querystring with url encoded parameters.
 	 */
-	private String buildQueryString(Map<String, String> urlParams, boolean checkForSecialChars) {
+	private String buildQueryString(Map<String, String> urlParams, 
+	 boolean checkForSecialChars) {
 		StringBuilder query = new StringBuilder();
 		boolean skipEntry = false;
 
 		for (Entry<String, String> urlParam : urlParams.entrySet()) {
 			
-			skipEntry = (checkForSecialChars && urlParam.getKey().startsWith("$"));
+			skipEntry = (checkForSecialChars && 
+			 urlParam.getKey().startsWith("$"));
 			if(!skipEntry) {
 				query.append("&" + encode(urlParam.getKey()) + "="
 					+ encode(urlParam.getValue()));

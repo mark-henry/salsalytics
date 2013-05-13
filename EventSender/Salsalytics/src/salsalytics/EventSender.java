@@ -1,6 +1,8 @@
 package salsalytics;
 
+import java.net.URL;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -64,7 +66,10 @@ public class EventSender extends Activity {
         private final static String manufactureKey = "$Manufacture";
         private final static String deviceNameKey = "$Device Name";
         private final static String serviceProviderKey = "$Wireless Service Provider";
+        private final static String noInternetStoredQueries = "failedQueries";
+        private static String currentFailedQueries = "";
         private static Context hostContext;
+        private static Scanner parser;
         
         // Public access for client to decide what device info is reported
         public static DeviceInformation deviceInformationCollected = new DeviceInformation();
@@ -101,13 +106,25 @@ public class EventSender extends Activity {
         	event.addData(title, attributes);
         	
         	try {
-        		if(internetAvalible())
+        		if(internetAvalible()) {
         			ats.execute(event.getServer());
+        			if(!currentFailedQueries.equals("")) {
+        				parser = new Scanner(currentFailedQueries);
+        				
+        				while(parser.hasNext()) {
+        					event = new Event(parser.next());
+        					ats = new AsyncTaskSender(event);
+        					//TODO check url!
+        					ats.execute(new URL(urlName));
+        				}
+        			}
+        		}
         		else {
         			Log.i("Salsalytics",
         			 "Unable to send Event, no internet connection.");
         	
-        			//TODO Backup Event and send later.
+        			//TODO TEST Backup Event and send later.
+        			currentFailedQueries += event.getQuery() + " ";
         		}
         	} catch(Exception e) {
         		Log.e("Salsalytics", "An error occurred while using the " +
@@ -279,6 +296,7 @@ public class EventSender extends Activity {
         	editor.clear();
         	editor.putString(serverKey, urlName);
         	editor.putString(appNameKey, appName);
+        	//TODO putString failedQuerires
         	
         	editor.putBoolean(androidVersionKey, deviceInformationCollected.isAndroidVersionNumberCollected);
         	editor.putBoolean(androidVersionCodeNameKey, deviceInformationCollected.isAndroidVersionCodenameCollected);
@@ -311,6 +329,7 @@ public class EventSender extends Activity {
         	allData.remove(serverKey);
         	appName = (String) allData.get(appNameKey);
         	allData.remove(appNameKey);
+        	//TODO get failed queries!
         	
         	deviceInformationCollected.setAndroidVersionNumberCollected((Boolean) allData.get(androidVersionKey));
         	allData.remove(androidVersionKey);
