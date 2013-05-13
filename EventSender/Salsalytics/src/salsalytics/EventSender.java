@@ -100,13 +100,22 @@ public class EventSender extends Activity {
         	new EventSender();
         	event.addData(title, attributes);
         	
-        	if(internetAvalible())
-        		ats.execute(event.getServer());
-        	else {
-        		Log.i("Salsalytics",
-        	     "Unable to send Event, no internet connection.");
+        	try {
+        		if(internetAvalible())
+        			ats.execute(event.getServer());
+        		else {
+        			Log.i("Salsalytics",
+        			 "Unable to send Event, no internet connection.");
         	
-        		//TODO Backup Event and send later.
+        			//TODO Backup Event and send later.
+        		}
+        	} catch(Exception e) {
+        		Log.e("Salsalytics", "An error occurred while using the " +
+        	     "context passed in to accesss the newwork state. Message: \n"
+        		 + e.getMessage() + "\nStack Trace: " + e.getStackTrace());
+        		
+        		//Attempt to send the message anyway
+        		ats.execute(event.getServer());
         	}
         }
         
