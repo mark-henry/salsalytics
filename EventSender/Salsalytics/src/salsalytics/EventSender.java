@@ -71,7 +71,9 @@ public class EventSender extends Activity {
         private static Context hostContext;
         private static Scanner parser;
         
-        // Public access for client to decide what device info is reported
+        /*
+         *  Public access for client to decide what device info is reported
+         */
         public static DeviceInformation deviceInformationCollected = new DeviceInformation();
         
         private EventSender() {
@@ -105,6 +107,9 @@ public class EventSender extends Activity {
         	new EventSender();
         	event.addData(title, attributes);
         	
+        	/*
+        	 *  Try-catch needed because user could pass in a bad/null context
+        	 */
         	try {
         		if(internetAvalible()) {
         			ats.execute(event.getServer());
@@ -114,7 +119,6 @@ public class EventSender extends Activity {
         				while(parser.hasNext()) {
         					event = new Event(parser.next());
         					ats = new AsyncTaskSender(event);
-        					//TODO check url!
         					ats.execute(new URL(urlName));
         				}
         			}
@@ -131,7 +135,9 @@ public class EventSender extends Activity {
         	     "context passed in to accesss the newwork state. Message: \n"
         		 + e.getMessage() + "\nStack Trace: " + e.getStackTrace());
         		
-        		//Attempt to send the message anyway
+        		/*
+        		 * Attempt to send the message anyway, at worst it dosen't send.
+        		 */
         		ats.execute(event.getServer());
         	}
         }
@@ -287,23 +293,32 @@ public class EventSender extends Activity {
          */
        @Override
         protected void onPause() {
+    	   	Log.d("Salsalytocs", "backup");
         	super.onPause();
         	
         	Set<String> keySet = constantMap.keySet();
-        	SharedPreferences salsalyticsPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        	SharedPreferences salsalyticsPrefs = 
+        	 PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         	SharedPreferences.Editor editor = salsalyticsPrefs.edit();
         	
         	editor.clear();
         	editor.putString(serverKey, urlName);
         	editor.putString(appNameKey, appName);
         	//TODO putString failedQuerires
+        	editor.putString(noInternetStoredQueries, currentFailedQueries);
         	
-        	editor.putBoolean(androidVersionKey, deviceInformationCollected.isAndroidVersionNumberCollected);
-        	editor.putBoolean(androidVersionCodeNameKey, deviceInformationCollected.isAndroidVersionCodenameCollected);
-        	editor.putBoolean(modelKey, deviceInformationCollected.isModelCollected);
-        	editor.putBoolean(manufactureKey, deviceInformationCollected.isManufactureCollected);
-        	editor.putBoolean(deviceNameKey, deviceInformationCollected.isDeviceNameCollected);
-        	editor.putBoolean(serviceProviderKey, deviceInformationCollected.isWirelessServiceProviderCollected);
+        	editor.putBoolean(androidVersionKey, 
+        	 deviceInformationCollected.isAndroidVersionNumberCollected);
+        	editor.putBoolean(androidVersionCodeNameKey, 
+        	 deviceInformationCollected.isAndroidVersionCodenameCollected);
+        	editor.putBoolean(modelKey, 
+        	 deviceInformationCollected.isModelCollected);
+        	editor.putBoolean(manufactureKey, 
+        	 deviceInformationCollected.isManufactureCollected);
+        	editor.putBoolean(deviceNameKey, 
+        	 deviceInformationCollected.isDeviceNameCollected);
+        	editor.putBoolean(serviceProviderKey, 
+        	 deviceInformationCollected.isWirelessServiceProviderCollected);
         	
         	for(String key : keySet) {
         		editor.putString(key, constantMap.get(key));
@@ -320,28 +335,38 @@ public class EventSender extends Activity {
 		@SuppressWarnings("unchecked")
 		@Override
         protected void onResume() {
-        	super.onResume();
+			Log.d("Salsalytocs", "restore");
+			super.onResume();
         	
-        	SharedPreferences salsalyticsPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());        	
+        	SharedPreferences salsalyticsPrefs = 
+        	 PreferenceManager.getDefaultSharedPreferences(getBaseContext());        	
 			Map<String, ?> allData = salsalyticsPrefs.getAll();
         	
         	urlName = (String) allData.get(serverKey);
         	allData.remove(serverKey);
         	appName = (String) allData.get(appNameKey);
         	allData.remove(appNameKey);
-        	//TODO get failed queries!
+        	currentFailedQueries = (String) 
+        	 allData.get(noInternetStoredQueries);
+        	allData.remove(noInternetStoredQueries);
         	
-        	deviceInformationCollected.setAndroidVersionNumberCollected((Boolean) allData.get(androidVersionKey));
+        	deviceInformationCollected.setAndroidVersionNumberCollected(
+        	 (Boolean) allData.get(androidVersionKey));
         	allData.remove(androidVersionKey);
-        	deviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(androidVersionCodeNameKey));
+        	deviceInformationCollected.setAndroidVersionCodenameCollected(
+        	 (Boolean) allData.get(androidVersionCodeNameKey));
         	allData.remove(androidVersionCodeNameKey);
-        	deviceInformationCollected.setDeviceNameCollected((Boolean) allData.get(deviceNameKey));
+        	deviceInformationCollected.setDeviceNameCollected((Boolean) 
+        	 allData.get(deviceNameKey));
         	allData.remove(deviceNameKey);
-        	deviceInformationCollected.setManufactureCollected((Boolean) allData.get(manufactureKey));
+        	deviceInformationCollected.setManufactureCollected((Boolean) 
+        	 allData.get(manufactureKey));
         	allData.remove(manufactureKey);
-        	deviceInformationCollected.setModelCollected((Boolean) allData.get(modelKey));
+        	deviceInformationCollected.setModelCollected((Boolean) 
+        	 allData.get(modelKey));
         	allData.remove(modelKey);
-        	deviceInformationCollected.setAndroidVersionCodenameCollected((Boolean) allData.get(serviceProviderKey));
+        	deviceInformationCollected.setAndroidVersionCodenameCollected(
+        	 (Boolean) allData.get(serviceProviderKey));
         	allData.remove(serviceProviderKey);
         	
         	constantMap.putAll((Map<String, String>) allData);

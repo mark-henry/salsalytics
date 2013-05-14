@@ -20,7 +20,7 @@ import android.widget.Switch;
 public class EpicLlamaFarmer extends Activity {
 	TreeMap<String, String> attributesMap = new TreeMap<String, String>();
 	TreeMap<String, String> constantData = new TreeMap<String, String>();
-	Button sendButton, setAppNameButton;
+	Button sendButton, setAppNameButton, failButton;
 	EditText appName, key1, value1, key2, value2, key3, value3;
 	CheckBox cBox;
 	Switch nameSwitch, maufactureSwitch, carrierSwitch;
@@ -36,6 +36,7 @@ public class EpicLlamaFarmer extends Activity {
 		
 		sendButton = (Button) findViewById(R.id.sendButton);
 		setAppNameButton = (Button) findViewById(R.id.setAppNameButton);
+		failButton = (Button) findViewById(R.id.failButton);
 		appName = (EditText) findViewById(R.id.appName);
 		key1 = (EditText) findViewById(R.id.key1);
 		key2 = (EditText) findViewById(R.id.key2);
@@ -69,6 +70,28 @@ public class EpicLlamaFarmer extends Activity {
 					attributesMap.put(sKey3, sValue3);
 				
 				EventSender.sendData(getBaseContext(), "EpicDemo", attributesMap);
+			}
+		});
+		
+		failButton.setOnClickListener(new View.OnClickListener(){
+			
+			@Override
+			public void onClick(View v) {
+				String sKey1 = key1.getText().toString();
+				String sValue1 = value1.getText().toString();
+				String sKey2 = key2.getText().toString();
+				String sValue2= value2.getText().toString();
+				String sKey3 = key3.getText().toString();
+				String sValue3 = value3.getText().toString();
+				
+				if(!sKey1.equals("") && !sValue1.equals(""))
+					attributesMap.put(sKey1, sValue1);
+				if(!sKey2.equals("") && !sValue2.equals(""))
+					attributesMap.put(sKey2, sValue2);
+				if(!sKey3.equals("") && !sValue3.equals(""))
+					attributesMap.put(sKey3, sValue3);
+				
+				EventSender.sendData(null, "EpicDemo", attributesMap);
 			}
 		});
 		

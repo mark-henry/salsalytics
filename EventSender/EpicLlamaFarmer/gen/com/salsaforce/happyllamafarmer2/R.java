@@ -25,10 +25,11 @@ public final class R {
     }
     public static final class id {
         public static final int CarrierSwitch=0x7f08000e;
-        public static final int action_settings=0x7f080010;
+        public static final int action_settings=0x7f080011;
         public static final int appName=0x7f080003;
         public static final int checkBox1=0x7f08000b;
         public static final int deviceNameSwitch=0x7f08000c;
+        public static final int failButton=0x7f080010;
         public static final int key1=0x7f080005;
         public static final int key2=0x7f080007;
         public static final int key3=0x7f080009;
