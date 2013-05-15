@@ -5,7 +5,6 @@ import com.salsaforce.happyllamafarmer2.R;
 
 import salsalytics.EventSender;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -28,11 +27,10 @@ public class EpicLlamaFarmer extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-				
 		setContentView(R.layout.new_features_layout);
 		
 		EventSender.setURL("http://freshsalsaforce.appspot.com/ReceiveEvents");
-
+		EventSender.setAppName("HappyLlamaFarmer2");
 		
 		sendButton = (Button) findViewById(R.id.sendButton);
 		setAppNameButton = (Button) findViewById(R.id.setAppNameButton);
@@ -147,6 +145,17 @@ public class EpicLlamaFarmer extends Activity {
 		});
 	}	
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		EventSender.onResume(getBaseContext());
+	}
+	
+	@Override
+	protected void onPause() {
+		EventSender.onPause(getBaseContext());
+		super.onPause();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

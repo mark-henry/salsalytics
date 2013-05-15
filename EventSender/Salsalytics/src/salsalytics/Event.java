@@ -43,7 +43,8 @@ class Event {
 	 * 
 	 * @param query
 	 */
-	Event(String query) {
+	Event(String url, String query) {
+		this.url = url;
 		this.query = query;
 	}
 	
@@ -75,7 +76,7 @@ class Event {
 			realUrl = new URL(url);
 			return realUrl;
 		} catch (MalformedURLException e) {
-			Log.e("Malformed String", e.getMessage());
+			Log.e("Malformed String", "Message: " + e.getMessage());
 		}
 
 		return null;
