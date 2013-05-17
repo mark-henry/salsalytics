@@ -59,10 +59,11 @@
     </types>
     <types>
         <members>SalsalyticsLogo</members>
-        <members>bootstrap</members>
         <members>bootstrapCustom</members>
+        <members>datepicker</members>
         <members>dynatree</members>
         <members>jQueryMobile</members>
+        <members>jqueryCookie</members>
         <name>StaticResource</name>
     </types>
     <version>27.0</version>

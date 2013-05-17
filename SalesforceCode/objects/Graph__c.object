@@ -77,10 +77,6 @@
                 <fullName>table</fullName>
                 <default>false</default>
             </picklistValues>
-            <picklistValues>
-                <fullName>timeline</fullName>
-                <default>false</default>
-            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <type>Picklist</type>

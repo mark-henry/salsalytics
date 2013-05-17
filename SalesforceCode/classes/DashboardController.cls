@@ -126,7 +126,7 @@ global with sharing class DashboardController {
      *  TESTS
      *
      */
-     @IsTest(SeeAllData=true) static void basicGraph() {
+     @IsTest(SeeAllData=true) static void testBasicGraph() {
          String correctString, chartString, graphID;
          List<Graph__c> queries;
          GraphAdder adder;
@@ -176,13 +176,11 @@ global with sharing class DashboardController {
 //         correctString += '<div id="chart" class="chart" key="' + queries.get(0).attribute__c + '"';
 //         correctString += 'graphName="' + queries.get(0).name + '"';
          
-         //correctString = '<div class ="row"></div>';
          correctString = '<div class ="row"><div class="span5">';
          correctString+= '<input type = "button" class = "btn btn-danger" name = "' + graphID + '"value = "Delete" onclick = "deleteGraph(\''+graphID+'\')"/>';
          correctString+= '<input type = "button" class = "btn btn-info" name = "'+graphID+'"value = "Edit" onclick = "editRedirect(\''+graphID+'\')"/>';
          correctString+= '<a href=singlegraph?graphid='+graphID+'><div id="chart" class="chart" key="user"graphName="'+queries.get(0).name;
-         correctString+= '"field0="Brandon" value0=1 field1="jdoe" value1=2 chartType="null"> </div> </a> </div></div>';
-
+         correctString+= '"field0="Brandon" value0=1 chartType="null"> </div> </a> </div></div>';
          
          List<AggregateResult> slices = Database.query(queries.get(0).Query__c);
             
@@ -197,7 +195,7 @@ global with sharing class DashboardController {
          
         System.debug('chartString: ' + chartString);
         System.debug('correctString: ' + correctString);        
-        
+        System.assert(chartString != null);
         System.assertEquals(correctString, chartString);
      }
      
