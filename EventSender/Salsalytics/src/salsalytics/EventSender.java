@@ -17,11 +17,12 @@ import android.util.Log;
  * <p>
  * This is the public interface for the Salsalytics EventSender package. This
  * class is thread safe singleton that can be safely used from anywhere in the
- * users Android application. This class has required methods: setUrl, which
- * sets the url for the Google App Engine Server in which to transfer data too,
- * and sendData, to trigger the send. Salsalytics uses the Application Name, if
- * you choose to supply it, as a filter to separate the data into separate tabs
- * in the Salsalytics Dashboard.
+ * users Android application via a static call. This class has only two 
+ * required methods.  The first is setUrl.  This method sets the url of the 
+ * Google App Engine Server in which to transfer data.  The second is sendData.
+ * This menthod is used to trigger sending an event. Salsalytics uses the 
+ * Application Name, if you choose to supply it, as a filter to separate the 
+ * data into separate tabs in the Salsalytics Dashboard.
  * </p>
  * 
  * <p>
@@ -37,24 +38,45 @@ import android.util.Log;
  * Device specific information is also collected for you by the Salsalytics
  * EventSender. Use the methods in EventSender's DeviceInfrormationColleced
  * object to set whether or not specific pieces of data about the device sent
- * along with your events. Android Version number (e.g. 4.2.2) is the only piece
- * of information defaulted to always sent.
+ * along with your events. Once a specific piece of information is turned on,
+ * such as Android Version number (e.g. 4.2.2), it will remain on and will
+ * continue to be sent with each event until it is turned off.
  * </p>
  * 
  * <p>
- * Within Salsalytics the Application Name, Constant Data Map and your decisions
- * about which of the build-in device information fields persists through the
- * application losing focus.
+ * Within Salsalytics the Application Name, Constant Data Map and your 
+ * decisions about which of the build-in device information fields persists 
+ * through the application losing focus or being force closed.  If the device 
+ * using your application does not an Internet connection the entire event 
+ * will be stored and sent later, when the device gains some sort of Internet
+ * connection.  This feature is very useful for applications running on tablets
+ * that may not have an always-on Internet connection.      
  * </p>
  * 
+ * <p> Important Notes
+ * <li>In order to send data, the URL must be set. (setURL and setAppName 
+ * should both be called in your applications onCreate method).
+ * <li>Event key's may not begin with a dollar sign ($) character.
+ * <li>To enable percistant data in Salsalytics (which includes backing 
+ * up later sending queries when no Internet is avalible)  you must call
+ * EventSender's onPause method in your onPause and EventSender's onResume
+ * method in your onResume method.   
+ * </p>
  * 
- * Important Notes <li>In order to send data, the URL must be set. <li>Key's may
- * not begin with a dollar sign ($) character.
- * 
- * 
- * Salsalytics uses the following permissions: <li>android.permission.INTERNET
+ * <br>
+ * <br>
+ * <p>
+ * Salsalytics uses the following permissions: 
+ * <br>
+ * <li>android.permission.INTERNET
  * <li>android.permission.ACCESS_NETWORK_STATE
+ * </p>
  * 
+ * <p> 
+ * Salsalytics has many helpful info and error messages for debugging any issues 
+ * you may encounter.  These log messages can be found under the tag 
+ * "Salsalytics".  
+ * </p>
  * 
  * @author Brandon Page, brpage@calpoly.edu
  */
@@ -96,7 +118,6 @@ public class EventSender {
 	 *            a String representing the URL
 	 */
 	public static void setURL(String URL) {
-		Log.i("Salsalytics", "set url: " + URL);
 		urlName = URL;
 	}
 
@@ -108,20 +129,21 @@ public class EventSender {
 	 * ***REMEMBER*** In order to send data, a valid App Engine project URL must
 	 * be set.
 	 * 
+	 * @param hostApplicationsContext
+	 *   The context of the application using Salsalytics.  Typically
+	 *   getBaseContext can be used 
 	 * @param title
-	 *            a String representing the Title of the Event.
+	 *  a String representing the Title of the Event.
 	 * @param attributes
-	 *            a Map<String, String> containing the key-value pair attributes
-	 *            associated with the Event.
+	 *  a Map<String, String> containing the key-value pair attributes
+	 *  associated with the Event.
 	 */
-	public static void sendData(Context someHostContext, String title,
+	public static void sendData(Context hostApplicationsContext, String title,
 			Map<String, String> attributes) {
-		EventSender.hostContext = someHostContext;
+		EventSender.hostContext = hostApplicationsContext;
 		new EventSender();
 		event.addData(title, attributes);
-
-		if (someHostContext == null)
-			Log.i("Salsalytics", "well now I'm just lost");
+		
 		/*
 		 * Try-catch needed because user could pass in a bad/null context
 		 */
@@ -129,21 +151,20 @@ public class EventSender {
 			if (internetAvalible()) {
 				ats.execute(event.getServer());
 				
-				 Log.i("Salsalytics", "current queries: " + currentFailedQueries); 
-				 
 				 if(currentFailedQueries != null && 
 				  !currentFailedQueries.equals("")) { 
 					 parser = new Scanner(currentFailedQueries);
 				 
-				 while(parser.hasNext()) { String query = parser.next();
-				 Log.i("Salsalytics", "old query: " + query); 
-				 event = new Event(urlName, query); 
-				 ats = new AsyncTaskSender(event);
-				 ats.execute(new URL(urlName)); }
+					 while(parser.hasNext()) {  
+						 event = new Event(urlName, parser.next()); 
+						 ats = new AsyncTaskSender(event);
+						 ats.execute(new URL(urlName)); 
+					 }	
 				 
-				 currentFailedQueries = ""; }
-				 
-			} else {
+					 currentFailedQueries = ""; 
+				 } 
+			} 
+			else {
 				Log.i("Salsalytics",
 						"Unable to send Event, no internet connection.");
 
@@ -324,7 +345,8 @@ public class EventSender {
 	 * application loses focus.
 	 * 
 	 * This method needs to be called in the host applications onPause method
-	 * for data to persist.
+	 * for data to persist.  This method should be called in the host 
+	 * application's onPause method.  
 	 * 
 	 */
 	public static void onPause(Context hostContex) {
@@ -368,8 +390,8 @@ public class EventSender {
 
 	/**
 	 * This method restores data (user choices and submissions) when the host
-	 * application loses focus.
-	 * 
+	 * application loses focus.  This method should be called in the host 
+	 * application's onResume method.  
 	 */
 	@SuppressWarnings("unchecked")
 	public static void onResume(Context hostContext) {
@@ -418,11 +440,6 @@ public class EventSender {
 
 			constantMap.putAll((Map<String, String>) allData);
 
-			// TODO further test this
-			/*for (Map.Entry<String, String> entry : constantMap.entrySet()) {
-				Log.v("Salsalytics", "constMap entry: " + entry.getKey() + ", "
-						+ entry.getValue());
-			}*/
 		} catch (Exception e) {
 			Log.i("Salsalytics", "Skipping restore.  (Could be a bad context)");
 		}

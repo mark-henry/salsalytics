@@ -1,11 +1,15 @@
 package com.salsaforce.happyllamafarmer2;
+import java.util.Map;
 import java.util.TreeMap;
 
 import com.salsaforce.happyllamafarmer2.R;
 
 import salsalytics.EventSender;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -153,8 +157,28 @@ public class EpicLlamaFarmer extends Activity {
 	
 	@Override
 	protected void onPause() {
-		EventSender.onPause(getBaseContext());
 		super.onPause();
+		EventSender.onPause(getBaseContext());
+		
+		
+		/*
+		 * This was used to test that the Salsalytics prefs are truly private
+		 * 
+		 * SharedPreferences llamaPrefs = getSharedPreferences("llama", Context.MODE_MULTI_PROCESS);
+		SharedPreferences.Editor editor = llamaPrefs.edit();
+		
+		editor.putString("This key", "should not be in SalsaPrefs!");
+		editor.commit();
+		
+		/*
+		 * salsalytics was listing all constatn data colleced with:
+		 * 
+			for (Map.Entry<String, String> entry : constantMap.entrySet()) {
+				Log.v("Salsalytics", "constMap entry: " + entry.getKey() + ", "
+						+ entry.getValue());
+			}
+		 * 
+		 */
 	}
 
 	@Override

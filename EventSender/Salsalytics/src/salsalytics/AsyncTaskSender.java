@@ -36,13 +36,18 @@ class AsyncTaskSender extends AsyncTask<URL, Integer, Long> {
                 Long status = null;
                 try {
                         status = Long.valueOf(event.send());
-                        Log.i("Salsalytics", "Web request return status: " + status);
+                        Log.i("Salsalytics", "Web request return status: " 
+                         + status);
 
                         return status;
                 } catch (MalformedURLException e) {
                         Log.e("Malformed String", e.getMessage());
+                        Log.e("Salsalytics", "Did you give the correct App" +
+                         "engine url?");
                 } catch (IOException e) {
                         Log.e("IOException", e.getMessage());
+                        Log.e("Salsalytics", "Did you forget to give an App" +
+                         "engine url?");
                 }
                 
                 Log.e("Salsalytics", " Error: Failure to send data, error code: " + 
